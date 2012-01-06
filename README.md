@@ -1,15 +1,20 @@
 # What it is
 
-# Travian+
+## Travian+
+
 Version: 2.1
+
 ### Coming Features
+
 #### crop consumption
 
 ---
 
 ### Features
+
 #### autofill buttons in marketplace
 - all res
 - w/o crop
 - only crop
+
 #### rang to own villages in village list
