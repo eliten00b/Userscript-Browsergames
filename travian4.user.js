@@ -134,6 +134,35 @@ var TravExtension = function() {
 			} else {
 				return null
 			}
+		},
+		addUniq: function(list, element, ids) {
+			for(var i=0;i<list.length; i++) {
+				uniq = false
+				for(var j=0;j<ids.length; j++) {
+					if(list[i][ids[j]] != element[ids[j]]) uniq = true
+				}
+				if(!uniq) element = ''
+			}
+			if(element != '') {
+				list[list.length] = element
+				return true
+			}
+			return false
+		},
+		updateUniq: function(list, element, ids) {
+		pos = -1
+			for(var i=0;i<list.length; i++) {
+				uniq = false
+				for(var j=0;j<ids.length; j++) {
+					if(list[i][ids[j]] != element[ids[j]]) uniq = true
+				}
+				if(!uniq) pos = i
+			}
+			if(pos > -1) {
+				list[pos] = element
+			} else {
+				list[list.length] = element
+			}
 		}
 	};
 
@@ -225,6 +254,9 @@ var TravExtension = function() {
 				r[i] = resRL[1]
 				l[i] = resRL[2]
 			}
+			Utils.updateUniq(PlayerSettings["resVillages"], {name: this.currentVillageName, p: p, r: r, l: l}, ["name"])
+			Player.savePlayerSettings()
+			// alert(JSON.stringify(PlayerSettings))
 			// alert("Produktion: "+p.toString() +"\n" + "Vorhanden: "+r.toString() +"\n" + "Lager: "+l.toString() +"\n")
 		}
 	};
