@@ -1,4 +1,4 @@
-## What it is
+# What it is
 
-## Travian+
-# Functions
+# Travian+
+### Functions
