@@ -4,6 +4,6 @@
 Version: 2.1
 ### Features
 * autofill buttons in marketplace
-> * all res
-> * w/o crop
-> * only crop
+* * all res
+* * w/o crop
+* * only crop
