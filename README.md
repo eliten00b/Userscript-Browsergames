@@ -1,4 +1,5 @@
 # What it is
 
 # Travian+
-### Functions
+Version: 2.1
+### Features
