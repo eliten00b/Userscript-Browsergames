@@ -554,7 +554,7 @@ var TravExtension = function() {
 		DorfList.Init()
 
 		currentTitle = Utils.currentTitle()
-		if(Marketplace.is(currentTitle)) {
+		if(Marketplace.is(currentTitle) & /t=./.exec(document.location.search) == null) {
 			Marketplace.createMenu(PlayerSettings.marketVillages)
 		} else if(Player.isProfil(currentTitle)) {
 			Village.analyze()
