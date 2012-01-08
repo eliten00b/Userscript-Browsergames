@@ -531,7 +531,7 @@ var TravExtension = function() {
 				entry = entry.nextSibling.nextSibling;
 			}
 			var bottom = Utils.XPathSingle("/html/body/div/div[2]/div[2]/div[3]/div[4]/div[3]")
-			var style = 'left: 168px; position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px;'
+			var style = 'position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px; left: 174px;'
 			bottom.appendChild(Utils.newElement("div", ""+this.sumGPro(), style));
 		}
 	};
