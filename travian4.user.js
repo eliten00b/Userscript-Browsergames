@@ -90,7 +90,7 @@ var TravExtension = function() {
 				console.log('Travian+: '+str);
 		},
 		Init: function() {
-			this.createStyleSheet();
+			// this.createStyleSheet();
 
 			this.isOpera = (window.opera) ? true : false;
 			this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false;
@@ -243,12 +243,12 @@ var TravExtension = function() {
 		},
 		readProduktion: function() {
 			// alert(Utils.XPathSingle('//*[@id="res"]').innerHTML)
-			p = new Array()
-			r = new Array()
-			l = new Array()
+			p = new Array(4)
+			r = new Array(4)
+			l = new Array(4)
 			for(var i=0;i<4;i++) {
 				var resP = Utils.XPathSingle('//*[@id="res"]/li[@class="r'+ (i+1) + '"]')
-				p[i] = /-*[0-9]+/.exec(resP.getAttribute("title"))[0]
+				p[i] = Utils.isChrome ? window.resources.production["l"+(i+1)] : /-*[0-9]+/.exec(resP.getAttribute("title"))[0]
 				var resRL = Utils.XPathSingle('//*[@id="l'+ (i+1) + '"]')
 				var resRL = /([0-9]+)\/([0-9]+)/.exec(resRL.innerHTML)
 				r[i] = resRL[1]
@@ -549,6 +549,7 @@ var TravExtension = function() {
 
 	// alert("läuft")
 	try {
+		Utils.Init()
 		Player.Init()
 		Village.Init()
 		DorfList.Init()
