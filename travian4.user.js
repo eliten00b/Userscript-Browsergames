@@ -475,7 +475,8 @@ var TravExtension = function() {
          this.listTable.childNodes[5].setAttribute("style", "background-size: 300px 39px; width: 300px;");
 		},
 		addTitle: function(element) {
-			this.listTable.childNodes[1].appendChild(Utils.newElement('div','Weg G3d/h','position: relative; top: 5px; font-size: 12px; left: 155px;'));
+			this.listTable.childNodes[1].appendChild(Utils.newElement('div','Weg','font-size: 12px; position: absolute; top: 21px; left: 149px;'));
+			this.listTable.childNodes[1].appendChild(Utils.newElement('div','G3d/h','font-size: 12px; position: absolute; top: 21px; left: 189px;'));
 		},
 		createRange: function(villageName, currentVillage) {
 			for(var i = 0;i<Village.villages.length;i++) {
