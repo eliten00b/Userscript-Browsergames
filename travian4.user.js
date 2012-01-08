@@ -493,7 +493,7 @@ var TravExtension = function() {
 			for(var i = 0;i<PlayerSettings.resVillages.length;i++) {
 				if(villageName == PlayerSettings.resVillages[i].name) {
 					var gPro = PlayerSettings.resVillages[i].p[3]
-					var spanElement = Utils.newElement('div', ""+gPro, 'display: inline-block; overflow: hidden; width: 25px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;');
+					var spanElement = Utils.newElement('div', ""+gPro, 'display: inline-block; overflow: hidden; width: 48px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;');
 					spanElement.setAttribute("class", "none");
 					return spanElement;
 				}
@@ -529,7 +529,7 @@ var TravExtension = function() {
 				entry = entry.nextSibling.nextSibling;
 			}
 			var bottom = Utils.XPathSingle("/html/body/div/div[2]/div[2]/div[3]/div[4]/div[3]")
-			var style = 'left: 158px; position: absolute; font-size: 10px; text-align: right; width: 35px; font-weight: bold; bottom: 12px;'
+			var style = 'left: 168px; position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px;'
 			bottom.appendChild(Utils.newElement("div", ""+this.sumGPro(), style));
 		}
 	};
