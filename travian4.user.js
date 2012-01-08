@@ -489,8 +489,23 @@ var TravExtension = function() {
 			}
 			return null;
 		},
-		addGProd: function() {
-
+		addGProd: function(villageName) {
+			for(var i = 0;i<PlayerSettings.resVillages.length;i++) {
+				if(villageName == PlayerSettings.resVillages[i].name) {
+					var gPro = PlayerSettings.resVillages[i].p[3]
+					var spanElement = Utils.newElement('div', ""+gPro, 'display: inline-block; overflow: hidden; width: 25px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;');
+					spanElement.setAttribute("class", "none");
+					return spanElement;
+				}
+			}
+			return null;
+		},
+		sumGPro: function() {
+			var sum = 0
+			for(var i = 0;i<PlayerSettings.resVillages.length;i++) {
+				sum += parseInt(PlayerSettings.resVillages[i].p[3])
+			}
+			return sum
 		},
 		Init: function() {
 			this.listTable = Utils.XPathSingle('//*[@id="villageList"]');
@@ -506,8 +521,16 @@ var TravExtension = function() {
 					entry.childNodes[1].setAttribute("style", "float: left;");
 					entry.appendChild(spanElement);
 				}
+				var spanElement = this.addGProd(entry.childNodes[1].innerHTML);
+				if(spanElement != null) {
+					entry.childNodes[1].setAttribute("style", "float: left;");
+					entry.appendChild(spanElement);
+				}
 				entry = entry.nextSibling.nextSibling;
 			}
+			var bottom = Utils.XPathSingle("/html/body/div/div[2]/div[2]/div[3]/div[4]/div[3]")
+			var style = 'left: 158px; position: absolute; font-size: 10px; text-align: right; width: 35px; font-weight: bold; bottom: 12px;'
+			bottom.appendChild(Utils.newElement("div", ""+this.sumGPro(), style));
 		}
 	};
 
