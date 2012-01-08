@@ -482,7 +482,8 @@ var TravExtension = function() {
 				if(villageName == Village.villages[i].name) {
 					var range = UnitsFnc.calcRange(currentVillage.x,currentVillage.y,Village.villages[i].x,Village.villages[i].y);
 					/*range = Math.floor(range*10)/10;*/
-					var spanElement = Utils.newElement('div', ""+Utils.number_format(range,1,'.',''), 'display: inline-block; overflow: hidden; width: 25px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;');
+					var style = 'display: inline-block; overflow: hidden; font-size: 10px; color: rgb(68, 68, 68); text-align: right; position: relative; width: 30px;'
+					var spanElement = Utils.newElement('div', ""+Utils.number_format(range,1,'.',''), style);
 					spanElement.setAttribute("class", "none");
 					return spanElement;
 				}
