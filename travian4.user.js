@@ -76,7 +76,7 @@ var TravExtension = function() {
 				if (!type) type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
 				return mydoc.evaluate(path, context, null, type, null)
 			}
-			catch (e) {Utils.log(e); }
+			catch (e) {Utils.log("XPath: "+e); }
 		},
 		XPathSingle: function(path, context) {
 			return this.XPath(path, context, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0);
@@ -564,8 +564,7 @@ var TravExtension = function() {
 			Village.addMarkMarkplace()
 		}
 		// alert("läuft!!");
-	} catch (e) { Utils.log(e)}
+	} catch (e) { Utils.log("main: "+e)}
 }
-window.TravExtension = TravExtension
 
 TravExtension()
