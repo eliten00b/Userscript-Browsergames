@@ -83,10 +83,10 @@ var TravExtension = function() {
 		},
 		log: function (str) {
 			if (Utils.gmEnabled)
-				GM_log(str);
+				GM_log('Travian+: '+str);
 			else if (Utils.isOpera)
-				window.opera.postError(str);
-			else if (Utils.isChrome)
+				window.opera.postError('Travian+: '+str);
+			else if (Utils.isChrome || Utils.isFirefox)
 				console.log('Travian+: '+str);
 		},
 		Init: function() {
@@ -181,6 +181,14 @@ var TravExtension = function() {
 				}
 			}
 			return this.currentVillageName;
+		},
+		currentVillageInfo: function() {
+			for(var i = 0; i < PlayerSettings.resVillages.length; i++) {
+				if(PlayerSettings.resVillages[i].name == this.currentVillageName) {
+					villageInfo = PlayerSettings.resVillages[i]
+					return villageInfo
+				}
+			}
 		},
 		nameOrCoords: function(dorf) {
 			if(dorf instanceof Object) {
@@ -566,7 +574,25 @@ var TravExtension = function() {
 			{name: 'Heldenhof', id: 37},
 			{name: 'Großes Rohstofflager', id: 38}, {name: 'Großer Kornspeicher', id: 39},
 			{name: 'Weltwunder', id: 40}, {name: 'Pferdetränke', id: 41}
-		]
+		],
+		restRes: function() {
+			res = new Array(4)
+			r = 0
+			tag = Utils.XPathSingle('//*[@id="contract"]/div[2]/div/span')
+			if(tag != null) {
+				villageInfo = Village.currentVillageInfo()
+				res[r] = parseInt(/>([0-9]+)/.exec(tag.innerHTML)[1]) - parseInt(villageInfo.r[r])
+				res[r] < 0 ? res[r] = 0 :
+				tag.appendChild(Utils.newElement('div', ''+res[r], 'margin-left: 23px;'))
+				for(var i=2;i<=4;i++) {
+					r++
+					tag = Utils.XPathSingle('//*[@id="contract"]/div[2]/div/span['+i+']')
+					res[r] = parseInt(/>([0-9]+)/.exec(tag.innerHTML)[1]) - parseInt(villageInfo.r[r])
+					res[r] < 0 ? res[r] = 0 :
+					tag.appendChild(Utils.newElement('div', ''+res[r], 'margin-left: 23px;'))
+				}
+			}
+		}
 	}
 
 	// alert("läuft")
@@ -577,6 +603,10 @@ var TravExtension = function() {
 		DorfList.Init()
 
 		currentTitle = Utils.currentTitle()
+		if(/Stufe/.exec(currentTitle) != null) {
+			Building.restRes()
+		}
+
 		if(Marketplace.is(currentTitle) & /t=./.exec(document.location.search) == null) {
 			Marketplace.createMenu(PlayerSettings.marketVillages)
 		} else if(Player.isProfil(currentTitle)) {
