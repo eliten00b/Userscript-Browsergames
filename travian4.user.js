@@ -546,6 +546,28 @@ var TravExtension = function() {
 	
 	var Report = {
 	}
+	
+	var Building = {
+		builgings: [
+			{name: 'Lehmgrube', id: 1}, {name: 'Lehmgrube', id: 2}, {name: 'Eisenmine', id: 3}, {name: 'Getreidefarm', id: 4},
+			{name: 'Sägewerk', id: 5}, {name: 'Lehmbrennerei', id: 6}, {name: 'Eisengießerei', id: 7}, {name: 'Getreidemühle', id: 8}, {name: 'Bäckerei', id: 9},
+			{name: 'Rohstofflager', id: 10}, {name: 'Kornspeicher', id: 11},
+			{name: '', id: 12}, {name: 'Schmiede', id: 13}, {name: 'Turnierplatz', id: 14},
+			{name: 'Hauptgebäude', id: 15},
+			{name: 'Versammlungsplatz', id: 16}, {name: 'Marktplatz', id: 17}, {name: 'Botschaft', id: 18},
+			{name: 'Kaserne', id: 19}, {name: 'Stall', id: 20}, {name: 'Werkstatt', id: 21},
+			{name: 'Akademie', id: 22}, {name: 'Versteck', id: 23},
+			{name: 'Rathaus', id: 24}, {name: 'Residenz', id: 25}, {name: 'Palast', id: 26},
+			{name: 'Schatzkammer', id: 27},
+			{name: 'Handelskontor', id: 28},
+			{name: 'Große Kaserne', id: 29}, {name: 'Großer Stall', id: 30},
+			{name: 'Stadtmauer', id: 31}, {name: 'Erdwall', id: 32}, {name: 'Palisade', id: 33},
+			{name: 'Steinmetz', id: 34}, {name: 'Brauerei', id: 35}, {name: 'Fallensteller', id: 36},
+			{name: 'Heldenhof', id: 37},
+			{name: 'Großes Rohstofflager', id: 38}, {name: 'Großer Kornspeicher', id: 39},
+			{name: 'Weltwunder', id: 40}, {name: 'Pferdetränke', id: 41}
+		]
+	}
 
 	// alert("läuft")
 	try {
