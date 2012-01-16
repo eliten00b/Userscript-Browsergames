@@ -251,7 +251,6 @@ TravExtension = function() {
 			Utils.appendBefore(link, script)
 		},
 		readProduktion: function() {
-			Utils.log(window)
 			p = new Array(4)
 			r = new Array(4)
 			l = new Array(4)
@@ -593,7 +592,7 @@ TravExtension = function() {
 		}
 	}
 
-	// alert("läuft")
+	console.log("start..")
 	try {
 		Utils.Init()
 		Player.Init()
@@ -613,13 +612,11 @@ TravExtension = function() {
 		} else if(Village.isVillagePage()) {
 			Village.addMarkMarkplace()
 		}
-		// alert("läuft!!");
+		Utils.log("finish!")
 	} catch (e) { Utils.log("main: "+e)}
 }
 
 var eTS = document.createElement("script")
 eTS.setAttribute("type", "text/javascript")
-eTS.appendChild(document.createTextNode("TravExtension = " + TravExtension))
+eTS.appendChild(document.createTextNode("(" + TravExtension + ")()"))
 document.head.appendChild(eTS)
-
-document.body.setAttribute("onload", "TravExtension()")
