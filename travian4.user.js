@@ -1,7 +1,8 @@
 ﻿// ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @description    Version 2.1 für Travian 4.0
+// @version        2.2
+// @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
 // ==/UserScript==
@@ -31,7 +32,7 @@
  * - Getreideproduktion auf Dorfübersicht-Lager aktuallisierbar
  **/
 
-var TravExtension = function() {
+TravExtension = function() {
 
 	var Utils = {
 		// storeTyp: "cookie", // cookie, localStorage
@@ -250,13 +251,12 @@ var TravExtension = function() {
 			Utils.appendBefore(link, script)
 		},
 		readProduktion: function() {
-			// alert(Utils.XPathSingle('//*[@id="res"]').innerHTML)
+			Utils.log(window)
 			p = new Array(4)
 			r = new Array(4)
 			l = new Array(4)
 			for(var i=0;i<4;i++) {
-				var resP = Utils.XPathSingle('//*[@id="res"]/li[@class="r'+ (i+1) + '"]')
-				p[i] = Utils.isChrome ? window.resources.production["l"+(i+1)] : /-*[0-9]+/.exec(resP.getAttribute("title"))[0]
+				p[i] = window.resources.production["l"+(i+1)]
 				var resRL = Utils.XPathSingle('//*[@id="l'+ (i+1) + '"]')
 				var resRL = /([0-9]+)\/([0-9]+)/.exec(resRL.innerHTML)
 				r[i] = resRL[1]
@@ -264,8 +264,6 @@ var TravExtension = function() {
 			}
 			Utils.updateUniq(PlayerSettings["resVillages"], {name: this.currentVillageName, p: p, r: r, l: l}, ["name"])
 			Player.savePlayerSettings()
-			// alert(JSON.stringify(PlayerSettings))
-			// alert("Produktion: "+p.toString() +"\n" + "Vorhanden: "+r.toString() +"\n" + "Lager: "+l.toString() +"\n")
 		}
 	};
 
@@ -619,4 +617,9 @@ var TravExtension = function() {
 	} catch (e) { Utils.log("main: "+e)}
 }
 
-TravExtension()
+var eTS = document.createElement("script")
+eTS.setAttribute("type", "text/javascript")
+eTS.appendChild(document.createTextNode("TravExtension = " + TravExtension))
+document.head.appendChild(eTS)
+
+document.body.setAttribute("onload", "TravExtension()")
