@@ -50,64 +50,64 @@ TravExtension = function() {
     },
 
     addTimer: function(targetNode, restTime, moreStyle) {
-      var newTimer = document.createElement("span");
-      newTimer.appendChild(document.createTextNode(restTime));
-      newTimer.setAttribute("style", moreStyle);
-      newTimer.setAttribute("id", "timer"+timerId);
-      targetNode.appendChild(newTimer);
-      timerId++;
+      var newTimer = document.createElement("span")
+      newTimer.appendChild(document.createTextNode(restTime))
+      newTimer.setAttribute("style", moreStyle)
+      newTimer.setAttribute("id", "timer"+timerId)
+      targetNode.appendChild(newTimer)
+      timerId++
     },
 
     XPath: function(path, context, type) {
       try {
-        if (!context) context = document;
-        mydoc = context.ownerDocument || document;
-        if (!type) type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+        if (!context) context = document
+        mydoc = context.ownerDocument || document
+        if (!type) type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
         return mydoc.evaluate(path, context, null, type, null)
       }
-      catch (e) {Utils.log("XPath: "+e); }
+      catch (e) { Utils.log("XPath: "+e) }
     },
 
     XPathSingle: function(path, context) {
-      return this.XPath(path, context, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0);
+      return this.XPath(path, context, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0)
     },
 
     log: function (str) {
       if (Utils.gmEnabled)
-        GM_log('Travian+: '+str);
+        GM_log('Travian+: '+str)
       else if (Utils.isOpera)
-        window.opera.postError('Travian+: '+str);
+        window.opera.postError('Travian+: '+str)
       else if (Utils.isChrome || Utils.isFirefox)
-        console.log('Travian+: '+str);
+        console.log('Travian+: '+str)
     },
 
     Init: function() {
-      // this.createStyleSheet();
+      // this.createStyleSheet()
 
-      this.isOpera = (window.opera) ? true : false;
-      this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false;
-      this.isChrome = (window.navigator.userAgent.indexOf('Chrome') > -1 ) ? true : false;
+      this.isOpera = (window.opera) ? true : false
+      this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false
+      this.isChrome = (window.navigator.userAgent.indexOf('Chrome') > -1 ) ? true : false
 
     },
 
     number_format: function(number, decimals, dec_point, thousands_sep) {
-      number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+      number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
       var n = !isFinite(+number) ? 0 : +number,
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
           sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
           dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
           s = '',
           toFixedFix = function (n, prec) {
-            var k = Math.pow(10, prec);
-            return '' + Math.round(n * k) / k;
-          };
-      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-      if (s[0].length > 3) { s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep); }
+            var k = Math.pow(10, prec)
+            return '' + Math.round(n * k) / k
+          }
+      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+      if (s[0].length > 3) { s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep) }
       if ((s[1] || '').length < prec) {
-        s[1] = s[1] || '';
-        s[1] += new Array(prec - s[1].length + 1).join('0');
+        s[1] = s[1] || ''
+        s[1] += new Array(prec - s[1].length + 1).join('0')
       }
-      return s.join(dec);
+      return s.join(dec)
     },
 
     newElement: function(tag, content, attr) {
@@ -133,9 +133,9 @@ TravExtension = function() {
     },
 
     addUniq: function(list, element, ids) {
-      for(var i=0;i<list.length; i++) {
+      for(var i = 0; i < list.length; i++) {
         uniq = false
-        for(var j=0;j<ids.length; j++) {
+        for(var j = 0; j < ids.length; j++) {
           if(list[i][ids[j]] != element[ids[j]]) uniq = true
         }
         if(!uniq) element = ''
@@ -149,9 +149,9 @@ TravExtension = function() {
 
     updateUniq: function(list, element, ids) {
     pos = -1
-      for(var i=0;i<list.length; i++) {
+      for(var i = 0; i < list.length; i++) {
         uniq = false
-        for(var j=0;j<ids.length; j++) {
+        for(var j = 0; j < ids.length; j++) {
           if(list[i][ids[j]] != element[ids[j]]) uniq = true
         }
         if(!uniq) pos = i
@@ -229,7 +229,7 @@ TravExtension = function() {
         , jsonString = "["
 
       while(line != null) {
-        if(i>1) jsonString += ",";
+        if(i>1) jsonString += ","
         var dorfname = /">(.*)<\/a>/.exec(line.childNodes[1].innerHTML)[1]
           , coords = /.*coordinateX">\(([-0-9]*)<\/span.*coordinateY">([-0-9]*)\)<\/span.*/.exec(line.childNodes[7].innerHTML)
         jsonString += "{name: \""+dorfname+"\", x: \""+coords[1]+"\", y: \""+coords[2]+"\"}"
@@ -278,7 +278,7 @@ TravExtension = function() {
 
   var Units = [
     // createUnit: function(name, speed) {
-      // return new Array(name, speed);
+      // return new Array(name, speed)
     // },
     // Units[2]['x1'][0]
     {
@@ -367,7 +367,7 @@ TravExtension = function() {
     },
 
     savePlayerSettings: function() {
-      Utils.writeStore("playerSettings."+PlayerSettings.player,JSON.stringify(PlayerSettings));
+      Utils.writeStore("playerSettings."+PlayerSettings.player,JSON.stringify(PlayerSettings))
     },
 
     isProfil: function(title) {
@@ -402,12 +402,12 @@ TravExtension = function() {
 
   var Marketplace = {
     is: function(title) {
-      if (title == null) return false;
+      if (title == null) return false
       return (/Marktplatz/.exec(title) != null)
     },
 
     createMenuPoint: function(village) {
-      var menuPoint = document.createElement("div");
+      var menuPoint = document.createElement("div")
       menuPoint.appendChild(Utils.newElement("span", Village.dorfName(village)+": ", "display: inline-block; width: 80px; overflow: hidden; height: 13px; white-space: nowrap;"))
       menuPoint.appendChild(Utils.newElement("a", "ALLES", [["href", "#"],["onclick", "return false;"], ["onmouseup", "sendRessis("+Village.nameOrCoords(village)+", 0)"]]))
       menuPoint.appendChild(Utils.newElement("span", " || ", ""))
@@ -486,7 +486,7 @@ TravExtension = function() {
             } \
           } \
         }\n \
-      //-->", "");
+      //-->", "")
       lieferScript.setAttribute("language", "JavaScript")
       document.getElementById("build").insertBefore(lieferScript, menu)
     }
@@ -516,8 +516,8 @@ TravExtension = function() {
           /*range = Math.floor(range*10)/10;*/
             , style = 'display: inline-block; overflow: hidden; font-size: 10px; color: rgb(68, 68, 68); text-align: right; position: relative; width: 30px;'
             , spanElement = Utils.newElement('div', ""+Utils.number_format(range,1,'.',''), style)
-          spanElement.setAttribute("class", "none");
-          return spanElement;
+          spanElement.setAttribute("class", "none")
+          return spanElement
         }
       }
       return null
@@ -529,7 +529,7 @@ TravExtension = function() {
           var gPro = PlayerSettings.resVillages[i].p[3]
             , spanElement = Utils.newElement('div', ""+gPro, 'display: inline-block; overflow: hidden; width: 48px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;')
           spanElement.setAttribute("class", "none")
-          return spanElement;
+          return spanElement
         }
       }
       return null
