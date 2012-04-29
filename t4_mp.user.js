@@ -7,8 +7,7 @@
 // @exclude        http://*.travian.de/login.php
 // ==/UserScript==
 
-if(!TravExtension) { TravExtension = {} }
-
+if(typeof TravExtension == 'undefined') { TravExtension = {} }
 TravExtension.MP = {
   init = function() {},
 

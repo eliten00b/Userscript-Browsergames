@@ -34,8 +34,8 @@
  * - Getreideproduktion auf Dorfübersicht-Lager aktuallisierbar
  **/
 
-if(!TravExtension) { TravExtension = {} }
-var TravExtension.Plus = function() {
+if(typeof TravExtension == 'undefined') { TravExtension = {} }
+TravExtension.Plus = function() {
 
   var Utils = {
     readStored: function(name) {
