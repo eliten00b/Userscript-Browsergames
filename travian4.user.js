@@ -402,9 +402,8 @@ TravExtension.Plus = function() {
   }
 
   var Marketplace = {
-    is: function(title) {
-      if (title == null) return false
-      return (/Marktplatz/.exec(title) != null)
+    is: function() {
+      return $$('#build.gid17').length != 0
     },
 
     createMenuPoint: function(village) {
@@ -634,7 +633,7 @@ TravExtension.Plus = function() {
       Building.restRes()
     }
 
-    if(Marketplace.is(currentTitle) & /t=./.exec(document.location.search) == null) {
+    if(Marketplace.is()) {
       Marketplace.createMenu(PlayerSettings.marketVillages)
     } else if(Player.isProfil(currentTitle)) {
       Village.analyze()
