@@ -34,7 +34,8 @@
  * - Getreideproduktion auf Dorfübersicht-Lager aktuallisierbar
  **/
 
-TravExtension = function() {
+if(!TravExtension) { TravExtension = {} }
+var TravExtension.Plus = function() {
 
   var Utils = {
     readStored: function(name) {
@@ -647,5 +648,5 @@ TravExtension = function() {
 
 var eTS = document.createElement("script")
 eTS.setAttribute("type", "text/javascript")
-eTS.appendChild(document.createTextNode("(" + TravExtension + ")()"))
+eTS.appendChild(document.createTextNode("(" + TravExtension.Plus + ")()"))
 document.head.appendChild(eTS)
