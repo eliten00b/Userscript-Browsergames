@@ -2,7 +2,7 @@
 
 ## Travian+
 
-Version: 2.1
+Version: 2.3
 
 ### Coming Features
 
