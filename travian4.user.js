@@ -423,79 +423,84 @@ TravExtension.Plus = function() {
         var menuPoint = this.createMenuPoint(villages[i])
         document.getElementById("build").insertBefore(menuPoint, menu)
       }
-      if(Utils.XPathSingle("/html/body/div/div[2]/div[2]/div[2]/div[2]/div/div/form/div[2]/input") == null) {
-        var x2only = false
+      var lieferScript = Utils.newElement('script', "var sendRessis = " + Marketplace.sendRessis.toString(), '')
+      lieferScript.setAttribute('type', 'text/javascript')
+      $$('#build.gid17')[0].insertBefore(lieferScript, menu)
+    },
+
+    sendRessis: function(dorf, r) {
+      var x2only = $$('#x2.dropdown').length == 0
+        , ressi1 = document.getElementById("l1")
+        , ressi2 = document.getElementById("l2")
+        , ressi3 = document.getElementById("l3")
+        , ressi4 = document.getElementById("l4")
+        , lager = new Array()
+        , ausdruckRessis = /([0-9]*)\/[0-9]*/
+
+      lager[0] = parseInt(ausdruckRessis.exec(ressi1.innerHTML)[1])
+      lager[1] = parseInt(ausdruckRessis.exec(ressi2.innerHTML)[1])
+      lager[2] = parseInt(ausdruckRessis.exec(ressi3.innerHTML)[1])
+      lager[3] = parseInt(ausdruckRessis.exec(ressi4.innerHTML)[1])
+
+      if(dorf instanceof Array) {
+        document.getElementById("xCoordInput").value=dorf[0]
+        document.getElementById("yCoordInput").value=dorf[1]
+        document.getElementsByName("dname")[0].value=''
       } else {
-        var x2only = true
+        document.getElementsByName("dname")[0].value=dorf
+        document.getElementById("xCoordInput").value=''
+        document.getElementById("yCoordInput").value=''
       }
-      sendRessis = function(dorf, r) {
-        var x2only = x2only
-          , ressi1 = document.getElementById("l1")
-          , ressi2 = document.getElementById("l2")
-          , ressi3 = document.getElementById("l3")
-          , ressi4 = document.getElementById("l4")
-          , lager = new Array()
-          , ausdruckRessis = /([0-9]*)\/[0-9]*/
-        lager[0] = parseInt(ausdruckRessis.exec(ressi1.innerHTML)[1]);
-        lager[1] = parseInt(ausdruckRessis.exec(ressi2.innerHTML)[1]);
-        lager[2] = parseInt(ausdruckRessis.exec(ressi3.innerHTML)[1]);
-        lager[3] = parseInt(ausdruckRessis.exec(ressi4.innerHTML)[1]);
-        if(dorf instanceof Array) {
-          document.getElementById("xCoordInput").value=dorf[0];
-          document.getElementById("yCoordInput").value=dorf[1];
-          document.getElementsByName("dname")[0].value='';
-        } else {
-          document.getElementsByName("dname")[0].value=dorf;
-          document.getElementById("xCoordInput").value='';
-          document.getElementById("yCoordInput").value='';
+
+      if(r == 1) {
+        lager[3] = 0
+      } else if(r == 2) {
+        lager[0] = 0
+        lager[1] = 0
+        lager[2] = 0
+      }
+
+      var ressisgesammt = lager[0] + lager[1] + lager[2] + lager[3]
+      if(ressisgesammt <= (haendler * carry)) {
+        document.getElementById("r1").value=lager[0]
+        document.getElementById("r2").value=lager[1]
+        document.getElementById("r3").value=lager[2]
+        document.getElementById("r4").value=lager[3]
+        if(!x2only) {
+          document.getElementsByName("x2")[0].selectedIndex = 0
         }
-        if(r == 1) { lager[3] = 0; }
-        else if(r == 2) {
-          lager[0] = 0;
-          lager[1] = 0;
-          lager[2] = 0;
+      } else {
+        ressisfaktor = new Array()
+        for(var i = 0; i < 4; i++) {
+          if(lager[i]==0) {
+            ressisfaktor[i] = 0
+          }
+          else {
+            ressisfaktor[i] = ressisgesammt/lager[i]
+          }
         }
-        var ressisgesammt = lager[0] + lager[1] + lager[2] + lager[3];
-        if(ressisgesammt <= (haendler * carry)) {
-          document.getElementById("r1").value=lager[0];
-          document.getElementById("r2").value=lager[1];
-          document.getElementById("r3").value=lager[2];
-          document.getElementById("r4").value=lager[3];
-          if(!x2only) {
-            document.getElementsByName("x2")[0].selectedIndex = 0;
+        var ressisSenden = new Array()
+        for(var i = 0; i < 4; i++) {
+          if(ressisfaktor[i] == 0) {
+            ressisSenden[i] = 0
           }
-        } else {
-          ressisfaktor = new Array();
-          for(var i = 0; i < 4; i++) {
-            if(lager[i]==0) {
-              ressisfaktor[i] = 0
-            }
-            else {
-              ressisfaktor[i] = ressisgesammt/lager[i]
-            }
+          else {
+            ressisSenden[i] = Math.ceil((haendler * carry)/ressisfaktor[i]) - 1
           }
-          var ressisSenden = new Array();
-          for(var i = 0; i<4;i++) {
-            if(ressisfaktor[i] == 0) {
-              ressisSenden[i] = 0
-            }
-            else {
-              ressisSenden[i] = Math.ceil((haendler * carry)/ressisfaktor[i]) - 1
-            }
-          }
-          document.getElementById("r1").value=ressisSenden[0];
-          document.getElementById("r2").value=ressisSenden[1];
-          document.getElementById("r3").value=ressisSenden[2];
-          document.getElementById("r4").value=ressisSenden[3];
-          if(!x2only) {
-            if((lager[0] + lager[1] + lager[2] + lager[3]) <= (haendler * carry * 2)) {
-              document.getElementsByName("x2")[0].selectedIndex = 1;
-            } else {
-              document.getElementsByName("x2")[0].selectedIndex = 2;
-            }
+        }
+        document.getElementById("r1").value=ressisSenden[0]
+        document.getElementById("r2").value=ressisSenden[1]
+        document.getElementById("r3").value=ressisSenden[2]
+        document.getElementById("r4").value=ressisSenden[3]
+
+        if(!x2only) {
+          if((lager[0] + lager[1] + lager[2] + lager[3]) <= (haendler * carry * 2)) {
+            document.getElementsByName("x2")[0].selectedIndex = 1
           } else {
-            document.getElementsByName("x2")[0].checked = true;
+            document.getElementsByName("x2")[0].selectedIndex = 2
           }
+        } else {
+          document.getElementsByName("x2")[0].checked = true
         }
       }
     }
