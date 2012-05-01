@@ -9,9 +9,10 @@
 
 if(typeof TravExtension == 'undefined') { TravExtension = {} }
 TravExtension.MP = {
-  init = function() {},
+  init: function() {
+  },
 
-  getVillageIdParam = function() {
+  getVillageIdParam: function() {
     return /newdid=\d+/.exec($$('a[class=active]')[0].getAttribute('href'))[0]
   },
 
