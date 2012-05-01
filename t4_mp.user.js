@@ -13,5 +13,9 @@ TravExtension.MP = {
 
   getVillageIdParam = function() {
     return /newdid=\d+/.exec($$('a[class=active]')[0].getAttribute('href'))[0]
+  },
+
+  getAllLinks: function() {
+    return $$('[onclick], a:not([href*=newdid],[href^=http]), form')
   }
 }
