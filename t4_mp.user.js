@@ -33,5 +33,15 @@ TravExtension.MP = function() {
     ]
 
     return $$(selectors.toString())
+  },
+
+  newHref = function(href, idParam) {
+    if(/\?/.exec(href)) {
+      href += '&' + idParam
+    } else {
+      href += '?' + idParam
+    }
+
+    return href
   }
 }
