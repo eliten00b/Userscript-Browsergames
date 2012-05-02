@@ -13,7 +13,13 @@ TravExtension.MP = function() {
   },
 
   getVillageIdParam = function() {
-    return /newdid=\d+/.exec($$('a[class=active]')[0].getAttribute('href'))[0]
+    var activeVillageElement = $$('a[class=active]')[0]
+
+    if(typeof activeVillageElement == 'undefined') {
+      return false
+    }
+
+    return /newdid=\d+/.exec(activeVillageElement.getAttribute('href'))[0]
   },
 
   getAllLinks = function() {
