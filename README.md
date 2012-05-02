@@ -18,3 +18,17 @@ Version: 2.3
 - only crop
 
 #### rang to own villages in village list
+
+## Travian+ Multiplayer
+
+Version: 0.1
+
+### Coming Features
+
+#### toggle button
+
+---
+
+### Features
+
+#### add current village id to all urls
