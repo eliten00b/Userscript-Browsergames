@@ -23,6 +23,6 @@ TravExtension.MP = function() {
   },
 
   getAllLinks = function() {
-    return $$('[onclick], a:not([href*=newdid],[href^=http]), form')
+    return $$('[onclick], [href]:not([href*=newdid],[href^=http]), form')
   }
 }
