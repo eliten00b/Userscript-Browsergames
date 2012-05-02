@@ -83,4 +83,11 @@ TravExtension.MP = function() {
 
     return href
   }
+
+  init()
 }
+
+var eTS = document.createElement("script")
+eTS.setAttribute("type", "text/javascript")
+eTS.appendChild(document.createTextNode("(" + TravExtension.MP + ")()"))
+document.head.appendChild(eTS)
