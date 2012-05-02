@@ -10,6 +10,45 @@
 if(typeof TravExtension == 'undefined') { TravExtension = {} }
 TravExtension.MP = function() {
   var init = function() {
+    var elements = getAllLinks()
+      , idParam  = getVillageIdParam()
+      , missings = []
+
+    /* skip tool if there no idParam */
+    if(!idParam) {
+      return
+    }
+
+    for(var i = 0; i < elements.length; i++) {
+      var element = elements[i]
+
+      if(/\.php|^\?/.exec(element.getAttribute('href'))) {
+        var href = element.getAttribute('href')
+
+        href = newHref(href, idParam)
+        element.setAttribute('href', href)
+      } else if(element.tagName == 'FORM') {
+        var action = element.getAttribute('action')
+
+        action = newHref(action, idParam)
+        element.setAttribute('action', action)
+      } else if(/window\.location\.href/.exec(element.getAttribute('onclick'))) {
+        var onclick = element.getAttribute('onclick')
+          , result  = /(.+= ')(.+\.php.+)(';)/.exec(onclick)
+
+        onclick = newHref(result[2], idParam)
+        onclick = result[1] + onclick + result[3]
+        element.setAttribute('onclick', onclick)
+      } else {
+        missings.push(i)
+      }
+    }
+
+    /* display all not changed links */
+    for(var i = 0; i < missings.length; i++) {
+      var id = missings[i]
+      console.log('missing', elements[id])
+    }
   },
 
   getVillageIdParam = function() {
