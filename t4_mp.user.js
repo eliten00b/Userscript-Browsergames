@@ -23,6 +23,15 @@ TravExtension.MP = function() {
   },
 
   getAllLinks = function() {
-    return $$('[onclick], [href]:not([href*=newdid],[href^=http]), form')
+    var selectors = [
+      '[onclick*=window.location.href]',
+      'form',
+      'a[href]:not([href*=newdid],[href^=http],[onclick])',
+      'a[onclick*=window.location.href]',
+      'area[href]:not([href*=newdid],[href^=http])',
+      'button[href]:not([href*=newdid],[href^=http])'
+    ]
+
+    return $$(selectors.toString())
   }
 }
