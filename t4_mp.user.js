@@ -8,15 +8,15 @@
 // ==/UserScript==
 
 if(typeof TravExtension == 'undefined') { TravExtension = {} }
-TravExtension.MP = {
-  init: function() {
+TravExtension.MP = function() {
+  var init = function() {
   },
 
-  getVillageIdParam: function() {
+  getVillageIdParam = function() {
     return /newdid=\d+/.exec($$('a[class=active]')[0].getAttribute('href'))[0]
   },
 
-  getAllLinks: function() {
+  getAllLinks = function() {
     return $$('[onclick], a:not([href*=newdid],[href^=http]), form')
   }
 }
