@@ -162,6 +162,13 @@ TravExtension.Plus = function() {
       } else {
         list[list.length] = element
       }
+    },
+
+    addCssStyle: function(selector, options) {
+      var styleElement = this.newElement('style', 0, [['type', 'text/css']])
+
+      styleElement.appendChild(document.createTextNode(selector + '{' + options + '}'))
+      $$('head')[0].appendChild(styleElement)
     }
   }
 
