@@ -89,6 +89,7 @@ TravExtension.Plus = function() {
       this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false
       this.isChrome = (window.navigator.userAgent.indexOf('Chrome') > -1 ) ? true : false
 
+      return $$('form[name=login][action^=dorf1]').length > 0
     },
 
     number_format: function(number, decimals, dec_point, thousands_sep) {
@@ -644,7 +645,7 @@ TravExtension.Plus = function() {
 
   console.log("start..")
   try {
-    Utils.Init()
+    if(Utils.Init()) { return }
     Player.Init()
     Village.Init()
     DorfList.Init()
@@ -663,7 +664,7 @@ TravExtension.Plus = function() {
       Village.addMarkMarkplace()
     }
     Utils.log("finish!")
-  } catch (e) { Utils.log("main: " + e)}
+  } catch (e) { Utils.log("main: " + e) }
 }
 
 var eTS = document.createElement("script")
