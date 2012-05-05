@@ -168,6 +168,10 @@ TravExtension.Plus = function() {
     addCssStyle: function(selector, options) {
       var styleElement = this.newElement('style', 0, [['type', 'text/css']])
 
+      if(typeOf(options) == 'array') {
+        options = options.join(';')
+      }
+
       styleElement.appendChild(document.createTextNode(selector + '{' + options + '}'))
       $$('head')[0].appendChild(styleElement)
     }
