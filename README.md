@@ -6,7 +6,7 @@ Version: 2.4
 
 ### Coming Features
 
-#### crop consumption
+- crop consumption
 
 ---
 
@@ -22,7 +22,7 @@ Version: 0.1
 
 ### Coming Features
 
-#### toggle button
+- toggle button
 
 ---
 
