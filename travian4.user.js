@@ -647,12 +647,138 @@ TravExtension.Plus = function() {
     }
   }
 
+  var SettingsOverview = {
+    createSettingsTable: function() {
+      var table   = Utils.newElement('table', 0, [ ['id', 'settings_overview'], ['class', 'hidden'] ])
+        , header  = this.createHeader()
+        , content = this.createContent()
+
+      table.appendChild(header)
+
+      for(var i = 0; i < content.length; i++) {
+        table.appendChild(content[i])
+      }
+
+      return table
+    },
+
+    createHeader: function() {
+      var headers = [
+                      {name: 'Name',    style: 'width:250px;'},
+                      {name: 'Value',   style: 'width:250px;'},
+                      {name: 'Options', style: 'width:100px;'}
+                    ]
+        , header  = document.newElement('tr')
+
+      for(var i = 0; i < headers.length; i++) {
+        header.appendChild(Utils.newElement('th', headers[i].name, headers[i].style))
+      }
+
+      return header
+    },
+
+    createContent: function() {
+      var settings = PlayerSettings
+        , self     = this
+
+      var content = []
+      content.push(this.createRow('player', settings.player, ''))
+      content.push(this.createRow('nation', settings.nation, ''))
+
+      content.push(this.createRow(Utils.newElement('b', 'marketVillages', []), '', ''))
+      if(settings.marketVillages.length == 0) {
+        content.push(this.createRow('', 'Keine Dörfer als Marktplatzziel definiert.', ''))
+      }
+      content = this.createRowsForSetting(content, settings.marketVillages)
+
+      content.push(this.createRow(Utils.newElement('b', 'resVillages', []), '', ''))
+      content = this.createRowsForSetting(content, settings.resVillages)
+
+
+      return content
+    },
+
+    readableWithBr: function(object) {
+      var out   = Utils.newElement('div',0,[])
+        , first = true
+
+      for(key in object) {
+        first ? first = false : out.appendChild(Utils.newElement('br',0,[]))
+        out.appendChild(Utils.newElement('span', key + ': ' + object[key].toString(), []))
+      }
+
+      return out
+    },
+
+    createRowsForSetting: function(content, setting) {
+      var self = this
+
+      setting.each(function(x,i) {
+        content.push(self.createRow(i.toString(), self.readableWithBr(x), ''))
+      })
+
+      return content
+    },
+
+    createRow: function(name, value, options) {
+      var row = Utils.newElement('tr', 1, [])
+
+      row.appendChild(Utils.newElement('td', name, []))
+      row.appendChild(Utils.newElement('td', value, []))
+      row.appendChild(Utils.newElement('td', options, []))
+
+      return row
+    },
+
+    addSettingsTable: function() {
+      var table = this.createSettingsTable()
+
+      $$('#mid')[0].appendChild(table)
+    },
+
+    addToggleButton: function() {
+      var toggle = Utils.newElement('div', 'Show/Hide Settings', [['id', 'settings_toggle'], ['onclick', '$$("#settings_overview")[0].toggleClass("hidden");']])
+
+      $$('#mid')[0].appendChild(toggle)
+    },
+
+    addStyles: function() {
+      Utils.addCssStyle('.hidden', 'display:none;')
+      Utils.addCssStyle('#settings_overview', ['background: rgba(255, 255, 255, 0.85)',
+                                               'border-spacing: 0',
+                                               'border-radius: 10px',
+                                               'box-shadow: 1px 1px 3px black',
+                                               'margin: 0 195px',
+                                               'padding: 6px',
+                                               'width: 600px'])
+      Utils.addCssStyle('#settings_overview tr', 'background: none;')
+      Utils.addCssStyle('#settings_overview td, #settings_overview th', ['background: none', 'vertical-align: top'])
+      Utils.addCssStyle('#settings_overview tr:nth-child(2n+1)', 'background: rgba(200, 200, 200, 0.4);')
+      Utils.addCssStyle('#settings_overview tr:nth-child(1)', 'background: rgba(150, 150, 150, 0.5);')
+      Utils.addCssStyle('#settings_toggle', ['background: rgba(255, 255, 255, 0.85)',
+                                             'border-radius: 10px',
+                                             'box-shadow: 1px 1px 3px black',
+                                             'position: absolute',
+                                             'left: 30px',
+                                             'padding: 6px',
+                                             'top: 130px',
+                                             'z-index: 51'])
+    },
+
+    Init: function() {
+      this.addStyles()
+      this.addSettingsTable()
+      this.addToggleButton()
+    }
+  }
+
   console.log("start..")
   try {
     if(Utils.Init()) { return }
     Player.Init()
     Village.Init()
     DorfList.Init()
+    SettingsOverview.Init()
 
     currentTitle = Utils.currentTitle()
     if(/Stufe/.exec(currentTitle) != null) {
