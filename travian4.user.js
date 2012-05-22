@@ -38,6 +38,7 @@
 T4 = function() {
   // Create global namespace
   TE = {}
+  TE.Addons = {}
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
