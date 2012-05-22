@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.4
+// @version        2.5
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -582,6 +582,35 @@ T4 = function() {
       }
     },
 
+    ConfigMenu: {
+      init: function() {
+        TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.85)',
+                                                  'border-radius: 10px',
+                                                  'box-shadow: 1px 1px 3px black',
+                                                  'position: absolute',
+                                                  'left: 30px',
+                                                  'padding: 6px',
+                                                  'top: 130px',
+                                                  'z-index: 51'])
+
+        this.addMenu()
+      },
+
+      addMenu: function() {
+        var menu = TE.Utils.newElement('div',
+            TE.Utils.newElement('span', 'Options', [['onclick', '$$("#config_menu .config_content")[0].toggleClass("hidden");']]),
+            [['id', 'config_menu']])
+
+        menu.appendChild(TE.Utils.newElement('div', 0, [['class', 'config_content hidden']]))
+
+        $$('#mid')[0].appendChild(menu)
+      },
+
+      addButtonToMenu: function(button) {
+        $$('#config_menu .config_content')[0].appendChild(button)
+      }
+    },
+
     SettingsOverview: {
       createSettingsTable: function() {
         var table   = TE.Utils.newElement('table', 0, [ ['id', 'settings_overview'], ['class', 'hidden'] ])
@@ -674,7 +703,7 @@ T4 = function() {
       addToggleButton: function() {
         var toggle = TE.Utils.newElement('div', 'Show/Hide Settings', [['id', 'settings_toggle'], ['onclick', '$$("#settings_overview")[0].toggleClass("hidden");']])
 
-        $$('#mid')[0].appendChild(toggle)
+        TE.Plus.ConfigMenu.addButtonToMenu(toggle)
       },
 
       addStyles: function() {
@@ -690,14 +719,6 @@ T4 = function() {
         TE.Utils.addCssStyle('#settings_overview td, #settings_overview th', ['background: none', 'vertical-align: top'])
         TE.Utils.addCssStyle('#settings_overview tr:nth-child(2n+1)', 'background: rgba(200, 200, 200, 0.4);')
         TE.Utils.addCssStyle('#settings_overview tr:nth-child(1)', 'background: rgba(150, 150, 150, 0.5);')
-        TE.Utils.addCssStyle('#settings_toggle', ['background: rgba(255, 255, 255, 0.85)',
-                                                  'border-radius: 10px',
-                                                  'box-shadow: 1px 1px 3px black',
-                                                  'position: absolute',
-                                                  'left: 30px',
-                                                  'padding: 6px',
-                                                  'top: 130px',
-                                                  'z-index: 51'])
       },
 
       init: function() {
@@ -783,6 +804,7 @@ T4 = function() {
       TE.Plus.Player.init()
       TE.Plus.Village.init()
       TE.Plus.DorfList.init()
+      TE.Plus.ConfigMenu.init()
       TE.Plus.SettingsOverview.init()
 
       currentTitle = TE.Utils.currentTitle()
