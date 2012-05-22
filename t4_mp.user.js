@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Multiplayer
 // @namespace      TravainMP
-// @version        0.2
+// @version        0.3
 // @description    Enable Multiplayer for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -10,6 +10,12 @@
 T4 = function() {
   TE.Addons.MP = {
     init: function() {
+      if(this.isMpModeOn()) {
+        this.replaceUrls()
+      }
+    },
+
+    replaceUrls: function() {
       var elements = this.getAllLinks()
         , idParam  = this.getVillageIdParam()
         , missings = []
@@ -82,6 +88,27 @@ T4 = function() {
       }
 
       return href
+    },
+
+    isMpModeOn: function() {
+      var playerName = TE.Config.PlayerSettings.player
+        , storeKey   = 'mpButtonOn.' + playerName
+        , on         = TE.Utils.readStored(storeKey) // empty is null
+
+      return on === null ? false : on == 'false' ? false : true
+    },
+
+    setMpMode: function(status) {
+      var playerName = TE.Config.PlayerSettings.player
+        , storeKey   = 'mpButtonOn.' + playerName
+
+      TE.Utils.writeStore(storeKey, status)
+    },
+
+    toggle: function() {
+      var mpMode = this.isMpModeOn()
+      console.log(mpMode)
+      this.setMpMode(!mpMode)
     }
   }
 
