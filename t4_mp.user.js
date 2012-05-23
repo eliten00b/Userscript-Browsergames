@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Multiplayer
 // @namespace      TravainMP
-// @version        0.3
+// @version        1.0
 // @description    Enable Multiplayer for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -10,12 +10,17 @@
 T4 = function() {
   TE.Addons.MP = {
     init: function() {
+      var mpMode     = this.isMpModeOn()
+        , buttonText = mpMode ? 'Turn MP off' : 'Turn MP on'
+        , button     = TE.Utils.newElement('div', buttonText, [['id', 'addon_mp'], ['onclick', 'TE.Addons.MP.toggle();']])
+
+      TE.Plus.ConfigMenu.addButtonToMenu(button)
       if(this.isMpModeOn()) {
-        this.replaceUrls()
+        this.addParamToUrls()
       }
     },
 
-    replaceUrls: function() {
+    addParamToUrls: function() {
       var elements = this.getAllLinks()
         , idParam  = this.getVillageIdParam()
         , missings = []
@@ -33,11 +38,13 @@ T4 = function() {
 
           href = this.newHref(href, idParam)
           element.setAttribute('href', href)
+          element.setAttribute('data-mp', 'href')
         } else if(element.tagName == 'FORM') {
           var action = element.getAttribute('action')
 
           action = this.newHref(action, idParam)
           element.setAttribute('action', action)
+          element.setAttribute('data-mp', 'action')
         } else if(/window\.location\.href/.exec(element.getAttribute('onclick'))) {
           var onclick = element.getAttribute('onclick')
             , result  = /(.+= ')(.+\.php.+)(';)/.exec(onclick)
@@ -45,6 +52,7 @@ T4 = function() {
           onclick = this.newHref(result[2], idParam)
           onclick = result[1] + onclick + result[3]
           element.setAttribute('onclick', onclick)
+          element.setAttribute('data-mp', 'onclick')
         } else {
           missings.push(i)
         }
@@ -54,6 +62,19 @@ T4 = function() {
       for(var i = 0; i < missings.length; i++) {
         var id = missings[i]
         console.log('missing', elements[id])
+      }
+    },
+
+    removeParamFromUrls: function() {
+      var elements = $$('[data-mp]')
+
+      for (var i = 0; i < elements.length; i++) {
+        var element = elements[i]
+          , attr    = element.getAttribute('data-mp')
+          , url     = element.getAttribute(attr)
+
+        url = url.replace(/[\?&]newdid=[\d]+/, '')
+        element.setAttribute(attr, url)
       }
     },
 
@@ -106,9 +127,16 @@ T4 = function() {
     },
 
     toggle: function() {
-      var mpMode = this.isMpModeOn()
-      console.log(mpMode)
-      this.setMpMode(!mpMode)
+      var mpMode     = !this.isMpModeOn()
+        , buttonText = mpMode ? 'Turn MP off' : 'Turn MP on'
+
+      $$('#addon_mp')[0].innerHTML = buttonText
+      this.setMpMode(mpMode)
+      if(mpMode) {
+        this.addParamToUrls()
+      } else {
+        this.removeParamFromUrls()
+      }
     }
   }
 
