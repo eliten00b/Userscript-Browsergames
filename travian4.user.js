@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.5
+// @version        2.6
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -43,7 +43,7 @@ T4 = function() {
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
     init: function() {
-      // this.createStyleSheet()
+      this.cssButton()
 
       this.isOpera = (window.opera) ? true : false
       this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false
@@ -178,6 +178,39 @@ T4 = function() {
 
       styleElement.appendChild(document.createTextNode(selector + '{' + options + '}'))
       $$('head')[0].appendChild(styleElement)
+    },
+
+    cssButton: function() {
+      this.addCssStyle(
+        '.button',
+        [
+          'color: #5d5d5d',
+          'background: -moz-linear-gradient(top, white 0%, #efefef 50%) no-repeat',
+          'background: -webkit-linear-gradient(top, white 0%, #efefef 50%) no-repeat',
+          'background: linear-gradient(top, white 0%, #efefef 50%) no-repeat',
+          'padding: 3px 5px',
+          'border: 1px solid #5d5d5d',
+          'border-radius: 12px',
+          'display: inline-block',
+          'box-shadow: 0 1px 2px #5D5D5D',
+          'cursor: pointer'
+        ]
+      )
+      this.addCssStyle(
+        '.button:hover',
+        [
+          'background: -moz-linear-gradient(top, #efefef 0%, #bbb 50%) no-repeat',
+          'background: -webkit-linear-gradient(top, #efefef 0%, #bbb 50%) no-repeat',
+          'background: linear-gradient(top, #efefef 0%, #bbb 50%) no-repeat'
+        ]
+      )
+      this.addCssStyle(
+        '.button:active',
+        [
+          'background: #efefef',
+          'box-shadow: inset 1px 1px 2px #5d5d5d'
+        ]
+      )
     }
   }
 
@@ -584,21 +617,23 @@ T4 = function() {
 
     ConfigMenu: {
       init: function() {
-        TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.85)',
+        TE.Utils.addCssStyle('#config_menu', ['background: rgba(0, 163, 255, 0.9)',
                                                   'border-radius: 10px',
                                                   'box-shadow: 1px 1px 3px black',
                                                   'position: absolute',
-                                                  'left: 30px',
+                                                  'left: 18px',
                                                   'padding: 6px',
-                                                  'top: 130px',
+                                                  'top: 124px',
+                                                  'width: 140px',
                                                   'z-index: 51'])
+        TE.Utils.addCssStyle('.config_content', ['margin-top: 5px'])
 
         this.addMenu()
       },
 
       addMenu: function() {
         var menu = TE.Utils.newElement('div',
-            TE.Utils.newElement('span', 'Options', [['onclick', '$$("#config_menu .config_content")[0].toggleClass("hidden");']]),
+            TE.Utils.newElement('span', 'Options', [['onclick', '$$("#config_menu .config_content")[0].toggleClass("hidden");'], ['class', 'button']]),
             [['id', 'config_menu']])
 
         menu.appendChild(TE.Utils.newElement('div', 0, [['class', 'config_content hidden']]))
@@ -607,6 +642,7 @@ T4 = function() {
       },
 
       addButtonToMenu: function(button) {
+        button.addClass('button')
         $$('#config_menu .config_content')[0].appendChild(button)
       }
     },
