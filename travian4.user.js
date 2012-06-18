@@ -88,13 +88,15 @@ T4 = function() {
       return this.XPath(path, context, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0)
     },
 
-    log: function (str) {
-      if (this.gmEnabled)
-        GM_log('Travian+: ' + str)
-      else if (this.isOpera)
-        window.opera.postError('Travian+: ' + str)
-      else if (this.isChrome || this.isFirefox)
-        console.log('Travian+: ' + str)
+    log: function (str, level) {
+      var level      = level || 0
+        , debugLevel = this.readStored('debugLevel') || 0
+
+      if (level <= debugLevel) {
+        if (this.gmEnabled) { GM_log('Travian+: ' + str) }
+        else if (this.isOpera) { window.opera.postError('Travian+: ' + str) }
+        else if (this.isChrome || this.isFirefox) { console.log('Travian+: ' + str) }
+      }
     },
 
     number_format: function(number, decimals, dec_point, thousands_sep) {
