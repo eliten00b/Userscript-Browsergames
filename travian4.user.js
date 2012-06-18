@@ -646,7 +646,7 @@ T4 = function() {
 
     ConfigMenu: {
       init: function() {
-        TE.Utils.addCssStyle('#config_menu', ['background: rgba(0, 163, 255, 0.9)',
+        TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.6)',
                                                   'border-radius: 10px',
                                                   'box-shadow: 1px 1px 3px black',
                                                   'position: absolute',
