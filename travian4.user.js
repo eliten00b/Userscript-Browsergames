@@ -394,7 +394,7 @@ T4 = function() {
       },
 
       getPlayer: function() {
-        return TE.Utils.XPathSingle('/html/body/div/div[2]/div[2]/div[3]/div[2]/a/span').innerHTML
+        return $$('#side_info .sideInfoPlayer .signLink span')[0].innerHTML
       },
 
       loadPlayerSettings: function() {
@@ -593,21 +593,27 @@ T4 = function() {
 
         var currentVillage = TE.Plus.Village.currentVillage()
           , entry = this.listEntry
+
         while(entry != null) {
           var spanElement = this.createRange(entry.childNodes[1].innerHTML, currentVillage)
+
           if(spanElement != null) {
             entry.childNodes[1].setAttribute("style", "float: left;")
             entry.appendChild(spanElement)
           }
+
           var spanElement = this.addGProd(entry.childNodes[1].innerHTML)
+
           if(spanElement != null) {
             entry.childNodes[1].setAttribute("style", "float: left;")
             entry.appendChild(spanElement)
           }
+
           entry = entry.nextSibling.nextSibling
         }
-        var bottom = TE.Utils.XPathSingle("/html/body/div/div[2]/div[2]/div[3]/div[4]/div[3]")
+        var bottom = $$('#villageList .foot')[0]
           , style = 'position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px; left: 174px;'
+
         bottom.appendChild(TE.Utils.newElement("div", "" + this.sumGPro(), style))
       }
     },
