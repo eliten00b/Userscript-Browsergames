@@ -66,9 +66,10 @@ T4 = function() {
 
     addTimer: function(targetNode, restTime, moreStyle) {
       var newTimer = document.createElement("span")
-      newTimer.appendChild(document.createTextNode(restTime))
+
+      newTimer.appendChild( document.createTextNode(restTime) )
       newTimer.setAttribute("style", moreStyle)
-      newTimer.setAttribute("id", "timer"+timerId)
+      newTimer.setAttribute("id", "timer" + timerId)
       targetNode.appendChild(newTimer)
       timerId++
     },
@@ -118,10 +119,21 @@ T4 = function() {
 
     newElement: function(tag, content, attr) {
       var element = document.createElement(tag)
-      if( typeof attr == "string" ) element.setAttribute("style", attr)
-        else for(var i=0; i < attr.length; i++) element.setAttribute(attr[i][0], attr[i][1])
-      if( typeof content == "string" ) element.appendChild(document.createTextNode(content))
-        else if(typeof content == "object") element.appendChild(content)
+
+      if (typeof attr == "string") {
+        element.setAttribute("style", attr)
+      } else {
+        for (var i=0; i < attr.length; i++) {
+          element.setAttribute(attr[i][0], attr[i][1])
+        }
+      }
+
+      if (typeof content == "string") {
+        element.appendChild(document.createTextNode(content))
+      } else if (typeof content == "object") {
+        element.appendChild(content)
+      }
+
       return element
     },
 
@@ -139,12 +151,16 @@ T4 = function() {
     },
 
     addUniq: function(list, element, ids) {
-      for(var i = 0; i < list.length; i++) {
+      for (var i = 0; i < list.length; i++) {
         uniq = false
-        for(var j = 0; j < ids.length; j++) {
-          if(list[i][ids[j]] != element[ids[j]]) uniq = true
+        for (var j = 0; j < ids.length; j++) {
+          if (list[i][ids[j]] != element[ids[j]]) {
+            uniq = true
+          }
         }
-        if(!uniq) element = ''
+        if(!uniq) {
+          element = ''
+        }
       }
       if(element != '') {
         list[list.length] = element
@@ -154,15 +170,20 @@ T4 = function() {
     },
 
     updateUniq: function(list, element, ids) {
-    pos = -1
-      for(var i = 0; i < list.length; i++) {
+      var pos = -1
+
+      for (var i = 0; i < list.length; i++) {
         uniq = false
-        for(var j = 0; j < ids.length; j++) {
-          if(list[i][ids[j]] != element[ids[j]]) uniq = true
+        for (var j = 0; j < ids.length; j++) {
+          if (list[i][ids[j]] != element[ids[j]]) {
+            uniq = true
+          }
         }
-        if(!uniq) pos = i
+        if (!uniq) {
+          pos = i
+        }
       }
-      if(pos > -1) {
+      if (pos > -1) {
         list[pos] = element
       } else {
         list[list.length] = element
