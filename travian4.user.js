@@ -244,8 +244,10 @@ T4 = function() {
       villages: [],
 
       init: function() {
-        this.currentVillageName = TE.Utils.XPathSingle('//a[@class="active"]').innerHTML
+        this.currentVillageName = $$('#villageNameField')[0].innerHTML
+
         this.loadVillages()
+
         this.readProduktion()
       },
 
