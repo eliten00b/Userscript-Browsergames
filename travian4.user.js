@@ -76,9 +76,9 @@ T4 = function() {
 
     XPath: function(path, context, type) {
       try {
-        if (!context) context = document
+        if(!context) context = document
         mydoc = context.ownerDocument || document
-        if (!type) type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
+        if(!type) type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
         return mydoc.evaluate(path, context, null, type, null)
       }
       catch (e) { this.log("XPath: "+e) }
@@ -92,10 +92,10 @@ T4 = function() {
       var level      = level || 0
         , debugLevel = this.readStored('debugLevel') || 0
 
-      if (level <= debugLevel) {
-        if (this.gmEnabled) { GM_log('Travian+: ' + str) }
-        else if (this.isOpera) { window.opera.postError('Travian+: ' + str) }
-        else if (this.isChrome || this.isFirefox) { console.log('Travian+: ' + str) }
+      if(level <= debugLevel) {
+        if(this.gmEnabled) { GM_log('Travian+: ' + str) }
+        else if(this.isOpera) { window.opera.postError('Travian+: ' + str) }
+        else if(this.isChrome || this.isFirefox) { console.log('Travian+: ' + str) }
       }
     },
 
@@ -111,8 +111,8 @@ T4 = function() {
             return '' + Math.round(n * k) / k
           }
       s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
-      if (s[0].length > 3) { s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep) }
-      if ((s[1] || '').length < prec) {
+      if(s[0].length > 3) { s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep) }
+      if((s[1] || '').length < prec) {
         s[1] = s[1] || ''
         s[1] += new Array(prec - s[1].length + 1).join('0')
       }
@@ -122,7 +122,7 @@ T4 = function() {
     newElement: function(tag, content, attr) {
       var element = document.createElement(tag)
 
-      if (typeof attr == "string") {
+      if(typeof attr == "string") {
         element.setAttribute("style", attr)
       } else {
         for (var i=0; i < attr.length; i++) {
@@ -130,9 +130,9 @@ T4 = function() {
         }
       }
 
-      if (typeof content == "string") {
+      if(typeof content == "string") {
         element.appendChild(document.createTextNode(content))
-      } else if (typeof content == "object") {
+      } else if(typeof content == "object") {
         element.appendChild(content)
       }
 
@@ -145,7 +145,7 @@ T4 = function() {
 
     currentTitle: function() {
       var title = this.XPathSingle('/html/body/div/div[2]/div[2]/div[2]/div[2]/div/h1')
-      if (title != null) {
+      if(title != null) {
         return title.innerHTML
       } else {
         return null
@@ -156,7 +156,7 @@ T4 = function() {
       for (var i = 0; i < list.length; i++) {
         uniq = false
         for (var j = 0; j < ids.length; j++) {
-          if (list[i][ids[j]] != element[ids[j]]) {
+          if(list[i][ids[j]] != element[ids[j]]) {
             uniq = true
           }
         }
@@ -177,15 +177,15 @@ T4 = function() {
       for (var i = 0; i < list.length; i++) {
         uniq = false
         for (var j = 0; j < ids.length; j++) {
-          if (list[i][ids[j]] != element[ids[j]]) {
+          if(list[i][ids[j]] != element[ids[j]]) {
             uniq = true
           }
         }
-        if (!uniq) {
+        if(!uniq) {
           pos = i
         }
       }
-      if (pos > -1) {
+      if(pos > -1) {
         list[pos] = element
       } else {
         list[list.length] = element
@@ -252,7 +252,7 @@ T4 = function() {
       },
 
       currentVillage: function() {
-        for(var i = 0; i < this.villages.length; i++) {
+        for (var i = 0; i < this.villages.length; i++) {
           if(this.villages[i].name == this.currentVillageName) {
             return this.villages[i]
           }
@@ -414,11 +414,11 @@ T4 = function() {
       },
 
       isProfil: function(title) {
-        if (title == null)
+        if(title == null)
           return false
         var re = new RegExp('Spieler Profil - ' + TE.Config.PlayerSettings.player)
           , title = re.exec(title)
-        if (title == null)
+        if(title == null)
           return false
         else
           return true
@@ -622,7 +622,7 @@ T4 = function() {
 
     Stable: {
       is: function(title) {
-        if (title == null) return false
+        if(title == null) return false
         return (/Stall/.exec(title) != null)
       }
     },
