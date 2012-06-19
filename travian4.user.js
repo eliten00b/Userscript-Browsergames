@@ -93,9 +93,15 @@ T4 = function() {
         , debugLevel = this.readStored('debugLevel') || 0
 
       if(level <= debugLevel) {
-        if(this.gmEnabled) { GM_log('Travian+: ' + str) }
-        else if(this.isOpera) { window.opera.postError('Travian+: ' + str) }
-        else if(this.isChrome || this.isFirefox) { console.log('Travian+: ' + str) }
+        if(this.gmEnabled) {
+          GM_log('Travian+:')
+          GM_log(str)
+        } else if(this.isOpera) {
+          window.opera.postError('Travian+:')
+          window.opera.postError(str)
+        } else if(this.isChrome || this.isFirefox) {
+          console.log('Travian+:', str)
+        }
       }
     },
 
