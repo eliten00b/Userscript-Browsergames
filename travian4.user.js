@@ -125,7 +125,7 @@ T4 = function() {
       if(typeof attr == "string") {
         element.setAttribute("style", attr)
       } else {
-        for (var i=0; i < attr.length; i++) {
+        for(var i=0; i < attr.length; i++) {
           element.setAttribute(attr[i][0], attr[i][1])
         }
       }
@@ -153,9 +153,9 @@ T4 = function() {
     },
 
     addUniq: function(list, element, ids) {
-      for (var i = 0; i < list.length; i++) {
+      for(var i = 0; i < list.length; i++) {
         uniq = false
-        for (var j = 0; j < ids.length; j++) {
+        for(var j = 0; j < ids.length; j++) {
           if(list[i][ids[j]] != element[ids[j]]) {
             uniq = true
           }
@@ -174,9 +174,9 @@ T4 = function() {
     updateUniq: function(list, element, ids) {
       var pos = -1
 
-      for (var i = 0; i < list.length; i++) {
+      for(var i = 0; i < list.length; i++) {
         uniq = false
-        for (var j = 0; j < ids.length; j++) {
+        for(var j = 0; j < ids.length; j++) {
           if(list[i][ids[j]] != element[ids[j]]) {
             uniq = true
           }
@@ -252,7 +252,7 @@ T4 = function() {
       },
 
       currentVillage: function() {
-        for (var i = 0; i < this.villages.length; i++) {
+        for(var i = 0; i < this.villages.length; i++) {
           if(this.villages[i].name == this.currentVillageName) {
             return this.villages[i]
           }
