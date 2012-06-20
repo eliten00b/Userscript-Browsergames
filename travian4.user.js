@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.6
+// @version        2.7
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -52,12 +52,34 @@ T4 = function() {
       return $$('form[name=login][action^=dorf1]').length > 0
     },
 
-    readStored: function(name) {
-      return localStorage.getItem(name)
+    readStored: function(name, evaluate) {
+      var value    = localStorage.getItem(name)
+        , evaluate = typeof evaluate === 'undefined' || evaluate
+
+      if(evaluate) {
+        try {
+          value = eval('(' + value + ')')
+        } catch(e) {
+          value = null
+          this.log(["readStored: value can't eval", name, value], 1)
+        }
+      }
+
+      return value
     },
 
-    writeStore: function(name,value) {
-      localStorage.setItem(name, value)
+    writeStore: function(name, value, jsonfy) {
+      var jsonfy = typeof jsonfy === 'undefined' || jsonfy
+
+      try {
+        if(jsonfy) {
+          value = JSON.stringify(value)
+        }
+
+        localStorage.setItem(name, value)
+      } catch(e) {
+        this.log(["writeStore: value can't stringify; will not save", value], 1)
+      }
     },
 
     cleanStore: function(name){
@@ -90,7 +112,7 @@ T4 = function() {
 
     log: function (str, level) {
       var level      = level || 0
-        , debugLevel = this.readStored('debugLevel') || 0
+        , debugLevel = this.readStored('debugLevel', false) || 0
 
       if(level <= debugLevel) {
         if(this.gmEnabled) {
@@ -292,15 +314,17 @@ T4 = function() {
       },
 
       loadVillages: function() {
-        var storedList = TE.Utils.readStored("villages."+TE.Config.PlayerSettings.player)
-        if(storedList != '' & storedList != null) {
-          // alert("villages."+TE.Config.PlayerSettings.player + ' = '+storedList)
-          this.villages = eval('(' + storedList + ')')
+        var storedList = TE.Utils.readStored("villages." + TE.Config.PlayerSettings.player)
+
+        TE.Utils.log(['loadVillages', "villages." + TE.Config.PlayerSettings.player, storedList], 2)
+
+        if(storedList != null) {
+          this.villages = storedList
         }
       },
 
       saveVillages: function() {
-        TE.Utils.writeStore("villages." + TE.Config.PlayerSettings.player, JSON.stringify(this.villages))
+        TE.Utils.writeStore("villages." + TE.Config.PlayerSettings.player, this.villages)
       },
 
       analyze: function() {
@@ -328,18 +352,32 @@ T4 = function() {
       },
 
       addMarkMarkplace: function() {
-        var link = TE.Utils.XPathSingle('//*[@id="tileDetails"]/div/div/div[3]')
-        if(link == null) return
-        if(/Händler schicken/.exec(link.innerHTML) == null) return
-        var link = link.firstChild
-          , dorfname = TE.Utils.XPathSingle('//*[@id="content"]/h1/span/span').innerHTML
-          , title = TE.Utils.XPathSingle('//*[@id="content"]/h1/span')
-          , coords = /.*coordinateX">\(([-0-9]*)<\/span.*coordinateY">([-0-9]*)\)<\/span.*/.exec(title.innerHTML)
-          , village = {name: dorfname, x: coords[1], y: coords[2]}
-          , neu = TE.Utils.newElement('a', 'Favorit', [['onmouseup','add2Marketplace(\'' + JSON.stringify(village) + '\')'],['onclick','return false'],['href', '#'],['style', 'float: right; background-image: url("http://tx3.travian.de/gpack/travian_Travian_4.0_Mephisto/img/a/plus.gif"); height: 16px; padding-left: 18px;']])
-        TE.Utils.appendBefore(link, neu)
-        var script = TE.Utils.newElement('script', '<!--\nvar writeStore = ' + TE.Utils.writeStore + '\nfunction add2Marketplace(json){writeStore(\'temp.' + TE.Config.PlayerSettings.player + '\', json)}\n//-->', [['type','text/javascript']])
-        TE.Utils.appendBefore(link, script)
+        var optionsElement = $$('#tileDetails .detailImage .options')
+
+        if(optionsElement.length === 0) { return }
+
+        if(/Händler schicken/.exec(optionsElement[0].innerHTML) == null) { return }
+
+        var dorfname = TE.Utils.XPathSingle('//*[@id="content"]/h1/span/span').innerHTML
+          , title    = TE.Utils.XPathSingle('//*[@id="content"]/h1/span')
+          , coords   = /.*coordinateX">\(([-0-9]*)<\/span.*coordinateY">([-0-9]*)\)<\/span.*/.exec(title.innerHTML)
+          , village  = {name: dorfname, x: coords[1], y: coords[2]}
+          , add2List = function(village) {
+              TE.Utils.writeStore("temp." + TE.Config.PlayerSettings.player, village)
+
+              return false
+          }
+          , button   = TE.Utils.newElement('span', 0, [['onclick', '(' + add2List + ')(' + JSON.stringify(village) + ')'], ['class', 'button']])
+
+        button.appendChild(TE.Utils.newElement('span', '', [['class', 'icon-orange-plus']]))
+        button.appendChild(TE.Utils.newElement('span', 'Handelsziel', [['style', 'float: right;']]))
+
+        optionsElement[0].appendChild( TE.Utils.newElement('div', button, [['class', 'option']]) )
+
+        TE.Utils.addCssStyle('.icon-orange-plus', ['height: 18px',
+                                                   'width: 18px',
+                                                   'background: transparent url("http://ts3.travian.de/gpack/travian_Travian_4.0_Wurststurm/img/a/btnPlus-small.png") 0 -56px no-repeat',
+                                                   'display: inline-block'])
       },
 
       readProduktion: function() {
@@ -387,17 +425,28 @@ T4 = function() {
       init: function() {
         TE.Config.PlayerSettings.player = this.getPlayer()
         this.loadPlayerSettings()
+
         var temp = TE.Utils.readStored("temp." + TE.Config.PlayerSettings.player)
-        if(temp != '' & temp != null) {
-          var dorf = eval('(' + temp + ')')
-          for(var i=0; i < TE.Config.PlayerSettings.marketVillages.length; i++) {
-            if(TE.Config.PlayerSettings.marketVillages[i].x==dorf.x && TE.Config.PlayerSettings.marketVillages[i].y==dorf.y) dorf = ''
+
+        TE.Utils.log(['temp.' + TE.Config.PlayerSettings.player, temp], 3)
+
+        if(temp != null) {
+          var dorf = temp
+
+          TE.Utils.log(['add village to marketVillages', dorf], 2)
+
+          for(var i = 0; i < TE.Config.PlayerSettings.marketVillages.length; i++) {
+            if(TE.Config.PlayerSettings.marketVillages[i].x == dorf.x && TE.Config.PlayerSettings.marketVillages[i].y == dorf.y) {
+              dorf = ''
+            }
           }
+
           if(dorf.length != '') {
             TE.Config.PlayerSettings.marketVillages[TE.Config.PlayerSettings.marketVillages.length] = dorf
             this.savePlayerSettings()
           }
         }
+
         TE.Utils.cleanStore("temp." + TE.Config.PlayerSettings.player)
       },
 
@@ -406,17 +455,20 @@ T4 = function() {
       },
 
       loadPlayerSettings: function() {
-        var storedList = TE.Utils.readStored("playerSettings."+TE.Config.PlayerSettings.player)
-        if(storedList != '' & storedList != null) {
-          // alert("TE.Config.PlayerSettings."+TE.Config.PlayerSettings.player+" = "+storedList)
-          TE.Config.PlayerSettings = eval('(' + storedList + ')')
+        var storedList = TE.Utils.readStored("playerSettings." + TE.Config.PlayerSettings.player)
+
+        if(storedList != null) {
+          TE.Config.PlayerSettings = storedList
+          TE.Utils.log(['loadPlayerSettings', 'playerSettings.' + TE.Config.PlayerSettings.player, storedList], 2)
+
           return true
         }
+
         return false
       },
 
       savePlayerSettings: function() {
-        TE.Utils.writeStore("playerSettings." + TE.Config.PlayerSettings.player, JSON.stringify(TE.Config.PlayerSettings))
+        TE.Utils.writeStore("playerSettings." + TE.Config.PlayerSettings.player, TE.Config.PlayerSettings)
       },
 
       isProfil: function(title) {
@@ -871,9 +923,9 @@ T4 = function() {
   }
 
   TE.Init = function() {
-    console.log("start..")
+    console.log("Travian+: start..")
     // try {
-      if(TE.Utils.init()) { return }
+      if( TE.Utils.init() ) { return }
       TE.Plus.Player.init()
       TE.Plus.Village.init()
       TE.Plus.DorfList.init()
@@ -886,12 +938,12 @@ T4 = function() {
         TE.Plus.Building.restRes()
       }
 
-      if(TE.Plus.Marketplace.is()) {
+      if( TE.Plus.Marketplace.is() ) {
         TE.Plus.Marketplace.createMenu(TE.Config.PlayerSettings.marketVillages)
-      } else if(TE.Plus.Player.isProfil(currentTitle)) {
+      } else if( TE.Plus.Player.isProfil(currentTitle) ) {
         TE.Plus.Village.analyze()
         TE.Plus.Player.analyze()
-      } else if(TE.Plus.Village.isVillagePage()) {
+      } else if( TE.Plus.Village.isVillagePage() ) {
         TE.Plus.Village.addMarkMarkplace()
       }
       TE.Utils.log("finish!")
@@ -903,5 +955,5 @@ T4 = function() {
 
 var eTS = document.createElement("script")
 eTS.setAttribute("type", "text/javascript")
-eTS.appendChild(document.createTextNode("(" + T4 + ")()"))
+eTS.appendChild( document.createTextNode("(" + T4 + ")()") )
 document.head.appendChild(eTS)
