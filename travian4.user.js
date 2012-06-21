@@ -42,6 +42,12 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
+    isOpera:   false,
+    isFirefox: false,
+    isChrome:  false,
+
+    timerId: 0,
+
     init: function() {
       this.cssButton()
 
@@ -86,14 +92,32 @@ T4 = function() {
       localStorage.removeItem(name)
     },
 
+    getNextTimerId: function(argument) {
+      var timer   = $$('#timer1')
+        , timerId = 1
+
+      while(timer.length > 0) {
+        ++timerId
+        timer = $$('#timer' + timerId)
+      }
+
+      this.timerId = timerId
+
+      return timerId
+    },
+
     addTimer: function(targetNode, restTime, moreStyle) {
       var newTimer = document.createElement("span")
+        , timerId  = this.getNextTimerId()
 
       newTimer.appendChild( document.createTextNode(restTime) )
       newTimer.setAttribute("style", moreStyle)
       newTimer.setAttribute("id", "timer" + timerId)
       targetNode.appendChild(newTimer)
-      timerId++
+
+      counter_minus[timerId] = new Object()
+      counter_minus[timerId].node = newTimer
+      counter_minus[timerId].counter_time = t_format1(newTimer)
     },
 
     XPath: function(path, context, type) {
@@ -451,6 +475,7 @@ T4 = function() {
       },
 
       getPlayer: function() {
+        // TODO: fix break if no playername
         return $$('#side_info .sideInfoPlayer .signLink span')[0].innerHTML
       },
 
