@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.7
+// @version        2.8
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -19,6 +19,12 @@
  * preview
  * - Anspassung an Volk spezifische Werte
  * - Spieltag + weitere Infos
+ * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
+ * - FIX Gesamt Getreide Berechnung
+ *
+ * 2.8
+ * - REFACTOR Utils.addTimer
+ *
  * 2.3
  * - Fix Händlertool
  *
