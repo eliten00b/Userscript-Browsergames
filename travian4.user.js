@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.8
+// @version        2.9
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -21,6 +21,9 @@
  * - Spieltag + weitere Infos
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
+ *
+ * 2.9
+ * - color the level bubbles, green can build, red can't build
  *
  * 2.8
  * - REFACTOR Utils.addTimer
@@ -717,6 +720,10 @@ T4 = function() {
     },
 
     Building: {
+      init: function() {
+        this.css()
+      },
+
       restRes: function() {
         var res = new Array(4)
           , resTags = $$('#contract .resources')
@@ -732,20 +739,116 @@ T4 = function() {
             }
           }
         }
+      },
+
+      overviewResources: function() {
+        this.overviewResourcesBubbles = this.getOverviewResourcesBubbles()
+        this.overviewResourcesAreas   = this.getOverviewResourcesAreas()
+
+        this.getOverviewResources()
+
+        this.updateOverviewResourcesBubbles()
+      },
+
+      getOverviewResourcesBubbles: function() {
+        var bubbles = []
+
+        if($$('div.village1').length > 0) {
+          bubbles = $$('div.village1 .level')
+        } else if($$('div.village2').length > 0) {
+          bubbles = $$('div.village2 div#village_map div#levels div')
+        }
+
+        return bubbles
+      },
+
+      getOverviewResourcesAreas: function() {
+        var areas = []
+
+        if($$('div.village1').length > 0) {
+          areas = $$('#rx area[href*=build]')
+        } else if($$('div.village2').length > 0) {
+          areas = $$('#clickareas area[alt!=Bauplatz]')
+        }
+
+        return areas
+      },
+
+      getOverviewResources: function() {
+        var bubbles = this.overviewResourcesBubbles
+          , areas   = this.overviewResourcesAreas
+
+        for(var i = 0; i < areas.length; ++i) {
+          var area    = areas[i]
+            , resTemp = area._extendedTipContent.text.match(/>(\d+)/g)
+            , res     = []
+
+          resTemp.each(function(t) {
+            res.push(t.replace(/>/, ''))
+          })
+
+          this.setOverviewResources(i, area, res.join(','))
+        }
+      },
+
+      setOverviewResources: function(i, area, res) {
+        var bubbles = this.overviewResourcesBubbles
+
+        if($$('div.village1').length > 0) {
+          bubbles[i].setAttribute('data-res', res)
+        } else if($$('div.village2').length > 0) {
+          var id = area.getAttribute('href').match(/id=(\d+)/)[1]
+
+          bubbles.filter('.aid' + id)[0].setAttribute('data-res', res)
+        }
+      },
+
+      updateOverviewResourcesBubbles: function() {
+        var bubbles = this.overviewResourcesBubbles
+
+        for(var i = 0; i < bubbles.length; ++i) {
+          var bubble   = bubbles[i]
+            , res      = bubble.getAttribute('data-res').split(',')
+            , resV     = TE.Plus.Village.currentVillageInfo()['r']
+            , canBuild = true
+
+          bubble.removeClass('can-build')
+          bubble.removeClass('cant-build')
+
+          for(var r = 0; r < res.length; ++r) {
+            if( parseInt(res[r]) > parseInt(resV[r]) ) { canBuild = false }
+          }
+
+
+          if( canBuild && !bubble.hasClass('underConstruction') ) {
+            bubble.addClass('can-build')
+          } else if( !bubble.hasClass('underConstruction') ) {
+            bubble.addClass('cant-build')
+          }
+        }
+      },
+
+      css: function() {
+        TE.Utils.addCssStyle('.can-build', ['background: rgba(0, 255, 0, 0.6) !important',
+                                                  'border-radius: 1em !important',
+                                                  'border: 1px black solid !important'])
+        TE.Utils.addCssStyle('.cant-build', ['background: rgba(255, 0, 0, 0.6) !important',
+                                                  'border-radius: 1em !important',
+                                                  'border: 1px black solid !important'])
       }
     },
 
     ConfigMenu: {
       init: function() {
         TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.6)',
-                                                  'border-radius: 10px',
-                                                  'box-shadow: 1px 1px 3px black',
-                                                  'position: absolute',
-                                                  'left: 18px',
-                                                  'padding: 6px',
-                                                  'top: 124px',
-                                                  'width: 140px',
-                                                  'z-index: 51'])
+                                              'border-radius: 10px',
+                                              'box-shadow: 1px 1px 3px black',
+                                              'position: absolute',
+                                              'left: 18px',
+                                              'padding: 6px',
+                                              'top: 124px',
+                                              'width: 140px',
+                                              'z-index: 51'])
         TE.Utils.addCssStyle('.config_content', ['margin-top: 5px'])
 
         this.addMenu()
@@ -962,8 +1065,11 @@ T4 = function() {
       TE.Plus.DorfList.init()
       TE.Plus.ConfigMenu.init()
       TE.Plus.SettingsOverview.init()
+      TE.Plus.Building.init()
 
-      currentTitle = TE.Utils.currentTitle()
+      var currentTitle = TE.Utils.currentTitle()
+
+      TE.Plus.Building.overviewResources()
 
       if(/Stufe/.exec(currentTitle) != null) {
         TE.Plus.Building.restRes()
