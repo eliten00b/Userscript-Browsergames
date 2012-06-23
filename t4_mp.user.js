@@ -1,11 +1,21 @@
 // ==UserScript==
 // @name           Travian+ Multiplayer
 // @namespace      TravainMP
-// @version        1.0
+// @version        1.1
 // @description    Enable Multiplayer for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
 // ==/UserScript==
+
+/*****   Updates  ***
+ * preview
+ *
+ * 1.1
+ * - add log messages
+ *
+ * 1.0
+ * - add toggle button
+ **/
 
 T4 = function() {
   TE.Addons.MP = {
@@ -63,6 +73,8 @@ T4 = function() {
         var id = missings[i]
         console.log('missing', elements[id])
       }
+
+      TE.Utils.log('Addon MP is running.')
     },
 
     removeParamFromUrls: function() {
@@ -76,6 +88,8 @@ T4 = function() {
         url = url.replace(/[\?&]newdid=[\d]+/, '')
         element.setAttribute(attr, url)
       }
+
+      TE.Utils.log('Addon MP is now turned off.')
     },
 
     getVillageIdParam: function() {
@@ -85,7 +99,11 @@ T4 = function() {
         return false
       }
 
-      return /newdid=\d+/.exec(activeVillageElement.getAttribute('href'))[0]
+      var idParam = /newdid=\d+/.exec(activeVillageElement.getAttribute('href'))[0]
+
+      TE.Utils.log(['Addon MP', 'getVillageIdParam', idParam], 2)
+
+      return idParam
     },
 
     getAllLinks: function() {
@@ -114,7 +132,7 @@ T4 = function() {
     isMpModeOn: function() {
       var playerName = TE.Config.PlayerSettings.player
         , storeKey   = 'mpButtonOn.' + playerName
-        , on         = TE.Utils.readStored(storeKey) // empty is null
+        , on         = TE.Utils.readStored(storeKey, false) // empty is null
 
       return on === null ? false : on == 'false' ? false : true
     },
@@ -123,7 +141,7 @@ T4 = function() {
       var playerName = TE.Config.PlayerSettings.player
         , storeKey   = 'mpButtonOn.' + playerName
 
-      TE.Utils.writeStore(storeKey, status)
+      TE.Utils.writeStore(storeKey, status, false)
     },
 
     toggle: function() {
