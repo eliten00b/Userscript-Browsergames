@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.9
+// @version        2.10
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -21,6 +21,9 @@
  * - Spieltag + weitere Infos
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
+ *
+ * 2.10
+ * - FIX max build level
  *
  * 2.9
  * - color the level bubbles, green can build, red can't build
@@ -782,6 +785,8 @@ T4 = function() {
           var area    = areas[i]
             , resTemp = area._extendedTipContent.text.match(/>(\d+)/g)
             , res     = []
+
+          if(resTemp === null) { continue }
 
           resTemp.each(function(t) {
             res.push(t.replace(/>/, ''))
