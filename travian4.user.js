@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.10
+// @version        2.11
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -22,7 +22,7 @@
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
  *
- * 2.10
+ * 2.11
  * - FIX max build level
  *
  * 2.9
@@ -779,7 +779,7 @@ T4 = function() {
 
       getOverviewResources: function() {
         var bubbles = this.overviewResourcesBubbles
-          , areas   = this.overviewResourcesAreas
+          , areas   = this.overviewResourcesAreas,
 
         for(var i = 0; i < areas.length; ++i) {
           var area    = areas[i]
@@ -813,12 +813,16 @@ T4 = function() {
 
         for(var i = 0; i < bubbles.length; ++i) {
           var bubble   = bubbles[i]
-            , res      = bubble.getAttribute('data-res').split(',')
+            , res      = bubble.getAttribute('data-res')
             , resV     = TE.Plus.Village.currentVillageInfo()['r']
             , canBuild = true
 
           bubble.removeClass('can-build')
           bubble.removeClass('cant-build')
+
+          if(res === null) { continue }
+
+          res = res.split(',')
 
           for(var r = 0; r < res.length; ++r) {
             if( parseInt(res[r]) > parseInt(resV[r]) ) { canBuild = false }
