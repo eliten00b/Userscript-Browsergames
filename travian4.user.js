@@ -779,7 +779,7 @@ T4 = function() {
 
       getOverviewResources: function() {
         var bubbles = this.overviewResourcesBubbles
-          , areas   = this.overviewResourcesAreas,
+          , areas   = this.overviewResourcesAreas
 
         for(var i = 0; i < areas.length; ++i) {
           var area    = areas[i]
