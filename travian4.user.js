@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.12
+// @version        2.13
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -24,6 +24,7 @@
  *
  * 2.13
  * - put all css in one tag
+ * - add script version next to option button
  *
  * 2.12
  * - execute script on domready event
@@ -60,6 +61,8 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
+    version:   'v2.13',
+
     isOpera:   false,
     isFirefox: false,
     isChrome:  false,
@@ -884,10 +887,10 @@ T4 = function() {
       },
 
       addMenu: function() {
-        var menu = TE.Utils.newElement('div',
-            TE.Utils.newElement('span', 'Options', [['onclick', '$$("#config_menu .config_content")[0].toggleClass("hidden");'], ['class', 'button']]),
-            [['id', 'config_menu']])
+        var menu = TE.Utils.newElement('div', 0, [['id', 'config_menu']])
 
+        menu.appendChild(TE.Utils.newElement('span', 'Options', [['onclick', '$$("#config_menu .config_content")[0].toggleClass("hidden");'], ['class', 'button']]))
+        menu.appendChild(TE.Utils.newElement('span', TE.Utils.version, 'margin-left: 10px;'))
         menu.appendChild(TE.Utils.newElement('div', 0, [['class', 'config_content hidden']]))
 
         $$('#mid')[0].appendChild(menu)
