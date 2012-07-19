@@ -22,6 +22,9 @@
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
  *
+ * 2.13
+ * - put all css in one tag
+ *
  * 2.12
  * - execute script on domready event
  *
@@ -260,7 +263,14 @@ T4 = function() {
     },
 
     addCssStyle: function(selector, options) {
-      var styleElement = this.newElement('style', 0, [['type', 'text/css']])
+      var styleElement = $$('#TEstyles')
+
+      if(styleElement.length === 0) {
+        styleElement = this.newElement('style', 0, [['type', 'text/css']])
+        styleElement.setAttribute('id', 'TEstyles')
+      } else {
+        styleElement = styleElement[0]
+      }
 
       if(typeOf(options) == 'array') {
         options = options.join(';')
