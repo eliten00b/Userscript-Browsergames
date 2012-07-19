@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.11
+// @version        2.12
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -21,6 +21,9 @@
  * - Spieltag + weitere Infos
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
+ *
+ * 2.12
+ * - execute script on domready event
  *
  * 2.11
  * - FIX max build level
@@ -746,7 +749,9 @@ T4 = function() {
 
       overviewResources: function() {
         this.overviewResourcesBubbles = this.getOverviewResourcesBubbles()
+        TE.Utils.log(['overviewResources', this.overviewResourcesBubbles], 3)
         this.overviewResourcesAreas   = this.getOverviewResourcesAreas()
+        TE.Utils.log(['overviewResources', this.overviewResourcesAreas], 3)
 
         this.getOverviewResources()
 
@@ -781,12 +786,17 @@ T4 = function() {
         var bubbles = this.overviewResourcesBubbles
           , areas   = this.overviewResourcesAreas
 
+        TE.Utils.log(['getOverviewResources', 'areas.length:', areas.length], 2)
         for(var i = 0; i < areas.length; ++i) {
           var area    = areas[i]
             , resTemp = area._extendedTipContent.text.match(/>(\d+)/g)
             , res     = []
 
-          if(resTemp === null) { continue }
+          if(resTemp === null) {
+            TE.Utils.log(['getOverviewResources', 'not found i: ' + i], 3)
+            continue
+          }
+          TE.Utils.log(['getOverviewResources', 'found i: ' + i, resTemp], 3)
 
           resTemp.each(function(t) {
             res.push(t.replace(/>/, ''))
@@ -1101,5 +1111,5 @@ T4 = function() {
 
 var eTS = document.createElement("script")
 eTS.setAttribute("type", "text/javascript")
-eTS.appendChild( document.createTextNode("(" + T4 + ")()") )
+eTS.appendChild( document.createTextNode("window.addEvent('domready', " + T4 + ")") )
 document.head.appendChild(eTS)
