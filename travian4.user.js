@@ -19,8 +19,8 @@
  * preview
  * - Anspassung an Volk spezifische Werte
  * - Spieltag + weitere Infos
- * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
+ * - add button for set debugLevel
  *
  * 2.15
  * - refactor SettingsOverview is dynamic now
