@@ -22,6 +22,9 @@
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
  *
+ * 2.14
+ * - update bubble colors
+ *
  * 2.13
  * - put all css in one tag
  * - add script version next to option button
@@ -861,10 +864,13 @@ T4 = function() {
       },
 
       css: function() {
-        TE.Utils.addCssStyle('.can-build', ['background: rgba(0, 255, 0, 0.6) !important',
+        TE.Utils.addCssStyle('.can-build', ['background: rgba(172, 231, 140, 0.8) !important',
                                                   'border-radius: 1em !important',
                                                   'border: 1px black solid !important'])
-        TE.Utils.addCssStyle('.cant-build', ['background: rgba(255, 0, 0, 0.6) !important',
+        TE.Utils.addCssStyle('.cant-build', ['background: rgba(243, 108, 108, 0.8) !important',
+                                                  'border-radius: 1em !important',
+                                                  'border: 1px black solid !important'])
+        TE.Utils.addCssStyle('.underConstruction', ['background: rgba(255, 166, 32, 0.8) !important',
                                                   'border-radius: 1em !important',
                                                   'border: 1px black solid !important'])
       }
