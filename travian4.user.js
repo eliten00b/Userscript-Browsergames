@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.13
+// @version        2.14
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -24,6 +24,8 @@
  *
  * 2.14
  * - update bubble colors
+ * - refactor localstorage save object
+ * - add more logs
  *
  * 2.13
  * - put all css in one tag
@@ -64,7 +66,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.13',
+    version:   'v2.14',
 
     isOpera:   false,
     isFirefox: false,
@@ -73,6 +75,8 @@ T4 = function() {
     timerId: 0,
 
     init: function() {
+      TE.Utils.log(['Utils.init'], 1)
+
       this.cssButton()
 
       this.isOpera = (window.opera) ? true : false
@@ -324,22 +328,23 @@ T4 = function() {
     Village: {
       currentVillageName: '',
 
-      villages: [],
-
       init: function() {
-        this.currentVillageName = $$('#villageNameField')[0].innerHTML
+        TE.Utils.log(['Village.init'], 1)
 
-        this.loadVillages()
+        this.currentVillageName = $$('#villageNameField')[0].innerHTML
 
         this.readProduktion()
       },
 
       currentVillage: function() {
-        for(var i = 0; i < this.villages.length; i++) {
-          if(this.villages[i].name == this.currentVillageName) {
-            return this.villages[i]
+        for(var i = 0; i < TE.Config.PlayerSettings.rangeVillages.length; i++) {
+          var village = TE.Config.PlayerSettings.rangeVillages[i]
+
+          if(village.name == this.currentVillageName) {
+            return village
           }
         }
+
         return this.currentVillageName
       },
 
@@ -368,38 +373,27 @@ T4 = function() {
         }
       },
 
-      loadVillages: function() {
-        var storedList = TE.Utils.readStored("villages." + TE.Config.PlayerSettings.player)
-
-        TE.Utils.log(['loadVillages', "villages." + TE.Config.PlayerSettings.player, storedList], 2)
-
-        if(storedList != null) {
-          this.villages = storedList
-        }
-      },
-
       saveVillages: function() {
         TE.Utils.writeStore("villages." + TE.Config.PlayerSettings.player, this.villages)
       },
 
       analyze: function() {
-        var i = 1
-          , table = TE.Utils.XPathSingle('//*[@id="villages"]')
-          , table = table.childNodes[3]
-          , line = table.childNodes[i]
-          , jsonString = "["
+        var lines = $$('#villages tbody tr')
+          , villages = []
 
-        while(line != null) {
-          if(i>1) jsonString += ","
-          var dorfname = /">(.*)<\/a>/.exec(line.childNodes[1].innerHTML)[1]
-            , coords = /.*coordinateX">\(([-0-9]*)<\/span.*coordinateY">([-0-9]*)\)<\/span.*/.exec(line.childNodes[7].innerHTML)
-          jsonString += "{name: \""+dorfname+"\", x: \""+coords[1]+"\", y: \""+coords[2]+"\"}"
-          i += 2
-          var line = table.childNodes[i]
+        TE.Utils.log(['analyze', lines], 2)
+
+        for(var i = 0; i < lines.length; ++i) {
+          var line     = lines[i]
+            , dorfname = line.select('.name a')[0].innerHTML
+            , coords   = line.select('.coords a')[0].getAttribute('href').match(/x=(-?[\d]+)&y=(-?[\d]+)/)
+
+          villages.push({name: dorfname, x: coords[1], y: coords[2]})
         }
-        jsonString += "]"
-        this.villages = eval('(' + jsonString + ')')
-        this.saveVillages()
+
+        TE.Config.PlayerSettings.rangeVillages = villages
+
+        TE.Config.savePlayerSettings()
       },
 
       isVillagePage: function() {
@@ -447,7 +441,7 @@ T4 = function() {
           l[i] = resRL[2]
         }
         TE.Utils.updateUniq(TE.Config.PlayerSettings["resVillages"], {name: this.currentVillageName, p: p, r: r, l: l}, ["name"])
-        TE.Plus.Player.savePlayerSettings()
+        TE.Config.savePlayerSettings()
       }
     },
 
@@ -478,8 +472,7 @@ T4 = function() {
 
     Player: {
       init: function() {
-        TE.Config.PlayerSettings.player = this.getPlayer()
-        this.loadPlayerSettings()
+        TE.Utils.log(['Player.init'], 1)
 
         var temp = TE.Utils.readStored("temp." + TE.Config.PlayerSettings.player)
 
@@ -498,7 +491,7 @@ T4 = function() {
 
           if(dorf.length != '') {
             TE.Config.PlayerSettings.marketVillages[TE.Config.PlayerSettings.marketVillages.length] = dorf
-            this.savePlayerSettings()
+            TE.Config.savePlayerSettings()
           }
         }
 
@@ -508,23 +501,6 @@ T4 = function() {
       getPlayer: function() {
         // TODO: fix break if no playername
         return $$('#side_info .sideInfoPlayer .signLink span')[0].innerHTML
-      },
-
-      loadPlayerSettings: function() {
-        var storedList = TE.Utils.readStored("playerSettings." + TE.Config.PlayerSettings.player)
-
-        if(storedList != null) {
-          TE.Config.PlayerSettings = storedList
-          TE.Utils.log(['loadPlayerSettings', 'playerSettings.' + TE.Config.PlayerSettings.player, storedList], 2)
-
-          return true
-        }
-
-        return false
-      },
-
-      savePlayerSettings: function() {
-        TE.Utils.writeStore("playerSettings." + TE.Config.PlayerSettings.player, TE.Config.PlayerSettings)
       },
 
       isProfil: function(title) {
@@ -541,7 +517,7 @@ T4 = function() {
       analyze: function() {
         var nationStr = TE.Utils.XPathSingle('//*[@id="details"]/tbody/tr[2]/td').innerHTML
         nationStr == "Gallier" ? TE.Config.PlayerSettings.nation = 3 : nationStr == "Germanen" ? TE.Config.PlayerSettings.nation = 2 : TE.Config.PlayerSettings.nation = 1
-        this.savePlayerSettings()
+        TE.Config.savePlayerSettings()
       }
     },
 
@@ -655,6 +631,41 @@ T4 = function() {
 
       listEntry: "",
 
+      init: function() {
+        TE.Utils.log(['DorfList.init'], 1)
+
+        this.listTable = $$('#villageList')[0]
+        this.listEntry = $$('#villageList li')
+
+        this.expendList()
+        this.addTitle()
+
+        var currentVillage = TE.Plus.Village.currentVillage()
+          , entry          = this.listEntry
+
+        for(var i = 0; i < this.listEntry.length; ++i) {
+          var entry       = this.listEntry[i]
+            , spanElement = this.createRange(entry.childNodes[1].innerHTML, currentVillage)
+
+          if(spanElement != null) {
+            entry.childNodes[1].setAttribute("style", "float: left;")
+            entry.appendChild(spanElement)
+          }
+
+          var spanElement = this.addGProd(entry.childNodes[1].innerHTML)
+
+          if(spanElement != null) {
+            entry.childNodes[1].setAttribute("style", "float: left;")
+            entry.appendChild(spanElement)
+          }
+        }
+
+        var bottom = $$('#villageList .foot')[0]
+          , style = 'position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px; left: 174px;'
+
+        bottom.appendChild(TE.Utils.newElement("div", this.sumGPro().toString(), style))
+      },
+
       expendList: function() {
            this.listTable.setAttribute("style", "width: 300px; left: -7px;")
            this.listTable.childNodes[1].setAttribute("style", "background-size: 300px 64px; width: 300px;")
@@ -668,69 +679,56 @@ T4 = function() {
       },
 
       createRange: function(villageName, currentVillage) {
-        for(var i = 0; i < TE.Plus.Village.villages.length; i++) {
-          if(villageName == TE.Plus.Village.villages[i].name) {
-            var range = TE.Plus.UnitsFnc.calcRange(currentVillage.x, currentVillage.y, TE.Plus.Village.villages[i].x, TE.Plus.Village.villages[i].y)
-            /*range = Math.floor(range*10)/10;*/
-              , style = 'display: inline-block; overflow: hidden; font-size: 10px; color: rgb(68, 68, 68); text-align: right; position: relative; width: 30px;'
+        TE.Utils.log(['DorfList.createRange'], 2)
+
+        for(var i = 0; i < TE.Config.PlayerSettings.rangeVillages.length; i++) {
+          var village = TE.Config.PlayerSettings.rangeVillages[i]
+
+          if(villageName == village.name) {
+            var range       = TE.Plus.UnitsFnc.calcRange(currentVillage.x, currentVillage.y, village.x, village.y)
+              , style       = 'display: inline-block; overflow: hidden; font-size: 10px; color: rgb(68, 68, 68); text-align: right; position: relative; width: 30px;'
               , spanElement = TE.Utils.newElement('div', "" + TE.Utils.number_format(range, 1, '.', ''), style)
+
             spanElement.setAttribute("class", "none")
+
             return spanElement
           }
         }
+
         return null
       },
 
       addGProd: function(villageName) {
+        TE.Utils.log(['DorfList.addGProd'], 2)
+
         for(var i = 0; i < TE.Config.PlayerSettings.resVillages.length; i++) {
-          if(villageName == TE.Config.PlayerSettings.resVillages[i].name) {
-            var gPro = TE.Config.PlayerSettings.resVillages[i].p[3]
+          var village = TE.Config.PlayerSettings.resVillages[i]
+
+          if(villageName == village.name) {
+            var gPro = village.p[3]
               , spanElement = TE.Utils.newElement('div', "" + gPro, 'display: inline-block; overflow: hidden; width: 48px; font-size: 10px; color: rgb(68, 68, 68); text-align: right;')
+
             spanElement.setAttribute("class", "none")
+
             return spanElement
           }
         }
+
         return null
       },
 
       sumGPro: function() {
+        TE.Utils.log(['DorfList.sumGPro'], 2)
+
         var sum = 0
+
         for(var i = 0; i < TE.Config.PlayerSettings.resVillages.length; i++) {
-          sum += parseInt(TE.Config.PlayerSettings.resVillages[i].p[3])
+          var village = TE.Config.PlayerSettings.resVillages[i]
+
+          sum += parseInt(village.p[3])
         }
+
         return sum
-      },
-
-      init: function() {
-        this.listTable = TE.Utils.XPathSingle('//*[@id="villageList"]')
-        this.listEntry = TE.Utils.XPathSingle('//*[@id="villageList"]/div/ul/li')
-        this.expendList()
-        this.addTitle()
-
-        var currentVillage = TE.Plus.Village.currentVillage()
-          , entry = this.listEntry
-
-        while(entry != null) {
-          var spanElement = this.createRange(entry.childNodes[1].innerHTML, currentVillage)
-
-          if(spanElement != null) {
-            entry.childNodes[1].setAttribute("style", "float: left;")
-            entry.appendChild(spanElement)
-          }
-
-          var spanElement = this.addGProd(entry.childNodes[1].innerHTML)
-
-          if(spanElement != null) {
-            entry.childNodes[1].setAttribute("style", "float: left;")
-            entry.appendChild(spanElement)
-          }
-
-          entry = entry.nextSibling.nextSibling
-        }
-        var bottom = $$('#villageList .foot')[0]
-          , style = 'position: absolute; font-size: 10px; text-align: right; width: 48px; font-weight: bold; bottom: 12px; left: 174px;'
-
-        bottom.appendChild(TE.Utils.newElement("div", "" + this.sumGPro(), style))
       }
     },
 
@@ -743,6 +741,8 @@ T4 = function() {
 
     Building: {
       init: function() {
+        TE.Utils.log(['Building.init'], 1)
+
         this.css()
       },
 
@@ -878,6 +878,8 @@ T4 = function() {
 
     ConfigMenu: {
       init: function() {
+        TE.Utils.log(['ConfigMenu.init'], 1)
+
         TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.6)',
                                               'border-radius: 10px',
                                               'box-shadow: 1px 1px 3px black',
@@ -1019,6 +1021,8 @@ T4 = function() {
       },
 
       init: function() {
+        TE.Utils.log(['SettingsOverview.init'], 1)
+
         this.addStyles()
         this.addSettingsTable()
         this.addToggleButton()
@@ -1027,7 +1031,46 @@ T4 = function() {
   }
 
   TE.Config = {
+    storageKey: '',
+
+    init: function() {
+      TE.Utils.log(['Config.init'], 1)
+
+      TE.Config.PlayerSettings.server = location.hostname.match(/^[^.]{3}/)[0]
+      TE.Config.PlayerSettings.player = TE.Plus.Player.getPlayer()
+
+      TE.Config.storageKey = TE.Config.PlayerSettings.server + '.' + TE.Config.PlayerSettings.player
+
+      TE.Config.loadPlayerSettings()
+    },
+
+    savePlayerSettings: function() {
+      var settings = {}
+
+      for(settingKey in TE.Config.PlayerSettings) {
+        if(settingKey.match(/^(server|player|nation)$/) === null) {
+          settings[settingKey] = TE.Config.PlayerSettings[settingKey]
+        }
+      }
+
+      TE.Utils.writeStore(TE.Config.storageKey, settings)
+    },
+
+    loadPlayerSettings: function() {
+      var settings = TE.Utils.readStored(TE.Config.storageKey)
+
+      TE.Utils.log(['loadPlayerSettings', TE.Config.storageKey, settings], 2)
+
+      if(settings != null) {
+        for(settingKey in settings) {
+          TE.Config.PlayerSettings[settingKey] = settings[settingKey]
+        }
+      }
+    },
+
     PlayerSettings: {
+      server: '',
+
       player: '',
 
       nation: '',
@@ -1036,7 +1079,7 @@ T4 = function() {
 
       resVillages: [],
 
-      villages: function() { alert("hier ist noch eins...") }
+      rangeVillages: []
     },
 
     Units: [
@@ -1098,10 +1141,11 @@ T4 = function() {
     console.log("Travian+: start..")
     // try {
       if( TE.Utils.init() ) { return }
+      TE.Config.init()
+      TE.Plus.ConfigMenu.init()
       TE.Plus.Player.init()
       TE.Plus.Village.init()
       TE.Plus.DorfList.init()
-      TE.Plus.ConfigMenu.init()
       TE.Plus.SettingsOverview.init()
       TE.Plus.Building.init()
 
