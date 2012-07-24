@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.14
+// @version        2.15
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -21,6 +21,9 @@
  * - Spieltag + weitere Infos
  * - Speicherstruktur ändern(FIX doppel Spieler Konflikt)
  * - FIX Gesamt Getreide Berechnung
+ *
+ * 2.15
+ * - refactor SettingsOverview is dynamic now
  *
  * 2.14
  * - update bubble colors
@@ -66,7 +69,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.14',
+    version:   'v2.15',
 
     isOpera:   false,
     isFirefox: false,
@@ -911,6 +914,14 @@ T4 = function() {
     },
 
     SettingsOverview: {
+      init: function() {
+        TE.Utils.log(['SettingsOverview.init'], 1)
+
+        this.addStyles()
+        this.addSettingsTable()
+        this.addToggleButton()
+      },
+
       createSettingsTable: function() {
         var table   = TE.Utils.newElement('table', 0, [ ['id', 'settings_overview'], ['class', 'hidden'] ])
           , header  = this.createHeader()
@@ -945,18 +956,21 @@ T4 = function() {
           , self     = this
 
         var content = []
-        content.push(this.createRow('player', settings.player, ''))
-        content.push(this.createRow('nation', settings.nation, ''))
 
-        content.push(this.createRow(TE.Utils.newElement('b', 'marketVillages', []), '', ''))
-        if(settings.marketVillages.length == 0) {
-          content.push(this.createRow('', 'Keine Dörfer als Marktplatzziel definiert.', ''))
+        for(settingKey in settings) {
+          if(typeOf(settings[settingKey]) === 'string') {
+            content.push(this.createRow(settingKey, settings[settingKey], ''))
+          }
+          else if(typeOf(settings[settingKey]) === 'array') {
+            content.push(this.createRow(TE.Utils.newElement('b', settingKey, []), '', ''))
+
+            if(settings[settingKey].length == 0) {
+              content.push(this.createRow('', 'leer', ''))
+            }
+
+            content = this.createRowsForSetting(content, settings[settingKey])
+          }
         }
-        content = this.createRowsForSetting(content, settings.marketVillages)
-
-        content.push(this.createRow(TE.Utils.newElement('b', 'resVillages', []), '', ''))
-        content = this.createRowsForSetting(content, settings.resVillages)
-
 
         return content
       },
@@ -1006,6 +1020,8 @@ T4 = function() {
       },
 
       addStyles: function() {
+        TE.Utils.log(['SettingsOverview.addStyles'], 2)
+
         TE.Utils.addCssStyle('.hidden', 'display:none;')
         TE.Utils.addCssStyle('#settings_overview', ['background: rgba(255, 255, 255, 0.85)',
                                                     'border-spacing: 0',
@@ -1018,14 +1034,6 @@ T4 = function() {
         TE.Utils.addCssStyle('#settings_overview td, #settings_overview th', ['background: none', 'vertical-align: top'])
         TE.Utils.addCssStyle('#settings_overview tr:nth-child(2n+1)', 'background: rgba(200, 200, 200, 0.4);')
         TE.Utils.addCssStyle('#settings_overview tr:nth-child(1)', 'background: rgba(150, 150, 150, 0.5);')
-      },
-
-      init: function() {
-        TE.Utils.log(['SettingsOverview.init'], 1)
-
-        this.addStyles()
-        this.addSettingsTable()
-        this.addToggleButton()
       }
     }
   }
