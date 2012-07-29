@@ -22,6 +22,9 @@
  * - FIX Gesamt Getreide Berechnung
  * - add button for set debugLevel
  *
+ * 2.16
+ * - refactor sendRessis function for Marketplace
+ *
  * 2.15
  * - refactor SettingsOverview is dynamic now
  *
@@ -553,17 +556,13 @@ T4 = function() {
 
       sendRessis: function(dorf, r) {
         var x2only = $$('#x2.dropdown').length == 0
-          , ressi1 = document.getElementById("l1")
-          , ressi2 = document.getElementById("l2")
-          , ressi3 = document.getElementById("l3")
-          , ressi4 = document.getElementById("l4")
+          , ressis = $$('#l1, #l2, #l3, #l4')
           , lager = new Array()
           , ausdruckRessis = /([0-9]*)\/[0-9]*/
 
-        lager[0] = parseInt(ausdruckRessis.exec(ressi1.innerHTML)[1])
-        lager[1] = parseInt(ausdruckRessis.exec(ressi2.innerHTML)[1])
-        lager[2] = parseInt(ausdruckRessis.exec(ressi3.innerHTML)[1])
-        lager[3] = parseInt(ausdruckRessis.exec(ressi4.innerHTML)[1])
+        ressis.each(function(res, i) {
+          lager[i] = parseInt(res.innerHTML.match(ausdruckRessis)[1])
+        })
 
         if(dorf instanceof Array) {
           document.getElementById("xCoordInput").value=dorf[0]
@@ -585,36 +584,28 @@ T4 = function() {
 
         var ressisgesammt = lager[0] + lager[1] + lager[2] + lager[3]
         if(ressisgesammt <= (haendler * carry)) {
-          document.getElementById("r1").value=lager[0]
-          document.getElementById("r2").value=lager[1]
-          document.getElementById("r3").value=lager[2]
-          document.getElementById("r4").value=lager[3]
+          $$('#r1, #r2, #r3, #r4').each(function(res, i) {
+            res.value = lager[i]
+          })
+
           if(!x2only) {
             document.getElementsByName("x2")[0].selectedIndex = 0
           }
         } else {
-          ressisfaktor = new Array()
+          var ressisfaktor = new Array()
+            , ressisSenden = new Array()
+
           for(var i = 0; i < 4; i++) {
-            if(lager[i]==0) {
-              ressisfaktor[i] = 0
-            }
-            else {
-              ressisfaktor[i] = ressisgesammt/lager[i]
-            }
+            ressisfaktor[i] = (lager[i] === 0 ? 0 : ressisgesammt / lager[i])
           }
-          var ressisSenden = new Array()
+
           for(var i = 0; i < 4; i++) {
-            if(ressisfaktor[i] == 0) {
-              ressisSenden[i] = 0
-            }
-            else {
-              ressisSenden[i] = Math.ceil((haendler * carry)/ressisfaktor[i]) - 1
-            }
+            ressisSenden[i] = (ressisfaktor[i] === 0 ? 0 : Math.ceil( (haendler * carry) / ressisfaktor[i] ) - 1)
           }
-          document.getElementById("r1").value=ressisSenden[0]
-          document.getElementById("r2").value=ressisSenden[1]
-          document.getElementById("r3").value=ressisSenden[2]
-          document.getElementById("r4").value=ressisSenden[3]
+
+          $$('#r1, #r2, #r3, #r4').each(function(res, i) {
+            res.value = ressisSenden[i]
+          })
 
           if(!x2only) {
             if((lager[0] + lager[1] + lager[2] + lager[3]) <= (haendler * carry * 2)) {
