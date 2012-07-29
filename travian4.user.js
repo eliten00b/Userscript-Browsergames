@@ -24,6 +24,7 @@
  *
  * 2.16
  * - refactor sendRessis function for Marketplace
+ * - add uniq village id to rangeVillages
  *
  * 2.15
  * - refactor SettingsOverview is dynamic now
@@ -393,8 +394,9 @@ T4 = function() {
           var line     = lines[i]
             , dorfname = line.select('.name a')[0].innerHTML
             , coords   = line.select('.coords a')[0].getAttribute('href').match(/x=(-?[\d]+)&y=(-?[\d]+)/)
+            , id       = line.select('.name a')[0].getAttribute('href').match(/d=(\d+)/)[1]
 
-          villages.push({name: dorfname, x: coords[1], y: coords[2]})
+          villages.push({name: dorfname, x: coords[1], y: coords[2], id: id})
         }
 
         TE.Config.PlayerSettings.rangeVillages = villages
