@@ -341,6 +341,8 @@ T4 = function() {
         this.currentVillageName = $$('#villageNameField')[0].innerHTML
 
         this.readProduktion()
+
+        this.css()
       },
 
       currentVillage: function() {
@@ -430,11 +432,6 @@ T4 = function() {
         button.appendChild(TE.Utils.newElement('span', 'Handelsziel', [['style', 'float: right;']]))
 
         optionsElement[0].appendChild( TE.Utils.newElement('div', button, [['class', 'option']]) )
-
-        TE.Utils.addCssStyle('.icon-orange-plus', ['height: 18px',
-                                                   'width: 18px',
-                                                   'background: transparent url("http://ts3.travian.de/gpack/travian_Travian_4.0_Wurststurm/img/a/btnPlus-small.png") 0 -56px no-repeat',
-                                                   'display: inline-block'])
       },
 
       readProduktion: function() {
@@ -450,6 +447,13 @@ T4 = function() {
         }
         TE.Utils.updateUniq(TE.Config.PlayerSettings["resVillages"], {name: this.currentVillageName, p: p, r: r, l: l}, ["name"])
         TE.Config.savePlayerSettings()
+      },
+
+      css: function() {
+        TE.Utils.addCssStyle('.icon-orange-plus', ['height: 18px',
+                                                   'width: 18px',
+                                                   'background: transparent url("http://ts3.travian.de/gpack/travian_Travian_4.0_Wurststurm/img/a/btnPlus-small.png") 0 -56px no-repeat',
+                                                   'display: inline-block'])
       }
     },
 
@@ -876,16 +880,7 @@ T4 = function() {
       init: function() {
         TE.Utils.log(['ConfigMenu.init'], 1)
 
-        TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.6)',
-                                              'border-radius: 10px',
-                                              'box-shadow: 1px 1px 3px black',
-                                              'position: absolute',
-                                              'left: 18px',
-                                              'padding: 6px',
-                                              'top: 124px',
-                                              'width: 140px',
-                                              'z-index: 51'])
-        TE.Utils.addCssStyle('.config_content', ['margin-top: 5px'])
+        this.css()
 
         this.addMenu()
       },
@@ -903,6 +898,19 @@ T4 = function() {
       addButtonToMenu: function(button) {
         button.addClass('button')
         $$('#config_menu .config_content')[0].appendChild(button)
+      },
+
+      css: function() {
+        TE.Utils.addCssStyle('#config_menu', ['background: rgba(255, 255, 255, 0.6)',
+                                              'border-radius: 10px',
+                                              'box-shadow: 1px 1px 3px black',
+                                              'position: absolute',
+                                              'left: 18px',
+                                              'padding: 6px',
+                                              'top: 124px',
+                                              'width: 140px',
+                                              'z-index: 51'])
+        TE.Utils.addCssStyle('.config_content', ['margin-top: 5px'])
       }
     },
 
@@ -910,7 +918,7 @@ T4 = function() {
       init: function() {
         TE.Utils.log(['SettingsOverview.init'], 1)
 
-        this.addStyles()
+        this.css()
         this.addSettingsTable()
         this.addToggleButton()
       },
@@ -1012,8 +1020,8 @@ T4 = function() {
         TE.Plus.ConfigMenu.addButtonToMenu(toggle)
       },
 
-      addStyles: function() {
-        TE.Utils.log(['SettingsOverview.addStyles'], 2)
+      css: function() {
+        TE.Utils.log(['SettingsOverview.css'], 2)
 
         TE.Utils.addCssStyle('.hidden', 'display:none;')
         TE.Utils.addCssStyle('#settings_overview', ['background: rgba(255, 255, 255, 0.85)',
