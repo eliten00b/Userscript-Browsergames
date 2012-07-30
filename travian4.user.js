@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.15
+// @version        2.16
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -73,7 +73,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.15',
+    version:   'v2.16',
 
     isOpera:   false,
     isFirefox: false,
