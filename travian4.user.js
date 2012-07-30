@@ -328,6 +328,12 @@ T4 = function() {
           'box-shadow: inset 1px 1px 2px #5d5d5d'
         ]
       )
+      this.addCssStyle(
+        '.button + .button',
+        [
+          'margin-top: 3px'
+        ]
+      )
     }
   }
 
