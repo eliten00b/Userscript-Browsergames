@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Oasesspy
 // @namespace      TravainOasesspy
-// @version        0.2
+// @version        0.3
 // @description    Spy all oases and check for animals.
 // @include        http://t*.travian.de/karte.php*
 // ==/UserScript==
@@ -40,7 +40,7 @@ T4 = function() {
               }
             },
             onSuccess: TE.Addons.Oasesspy.handleSearchSuccess,
-            url: '/ajax.php?cmd=mapPositionData'
+            url: 'ajax.php?cmd=mapPositionData'
           }
 
       TE.Utils.log('Start getting data for oases...')
@@ -58,7 +58,7 @@ T4 = function() {
               }
             },
             onSuccess: TE.Addons.Oasesspy.handleSuccess,
-            url: '/ajax.php?cmd=viewTileDetails'
+            url: 'ajax.php?cmd=viewTileDetails'
           }
 
     },
