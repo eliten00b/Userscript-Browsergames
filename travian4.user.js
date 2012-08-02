@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.16
+// @version        2.17
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -21,6 +21,9 @@
  * - Spieltag + weitere Infos
  * - FIX Gesamt Getreide Berechnung
  * - add button for set debugLevel
+ *
+ * 2.17
+ * - add a log bar
  *
  * 2.16
  * - refactor sendRessis function for Marketplace
@@ -73,7 +76,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.16',
+    version:   'v2.17',
 
     isOpera:   false,
     isFirefox: false,
@@ -84,7 +87,8 @@ T4 = function() {
     init: function() {
       TE.Utils.log(['Utils.init'], 1)
 
-      this.cssButton()
+      this.css()
+      this.addLogBar()
 
       this.isOpera = (window.opera) ? true : false
       this.isFirefox = (window.navigator.userAgent.indexOf('Firefox') > -1 ) ? true : false
@@ -182,6 +186,13 @@ T4 = function() {
           window.opera.postError(str)
         } else if(this.isChrome || this.isFirefox) {
           console.log('Travian+:', str)
+        }
+
+        if($$('#log_bar').length !== 0 && level === 0) {
+          $$('#log_bar')[0].innerHTML = 'Travian+: ' + str.toString()
+
+          clearTimeout(this.logBarTimeout)
+          this.logBarTimeout = setTimeout(this.clearLogBar, 2000)
         }
       }
     },
@@ -297,7 +308,18 @@ T4 = function() {
       $$('head')[0].appendChild(styleElement)
     },
 
-    cssButton: function() {
+    addLogBar: function() {
+      $$('#header')[0].appendChild(this.newElement('div', 0, [['id', 'log_bar']]))
+    },
+
+    clearLogBar: function() {
+      if($$('#log_bar').length !== 0) {
+        $$('#log_bar')[0].innerHTML = ''
+      }
+    },
+
+    css: function() {
+      // button
       this.addCssStyle(
         '.button',
         [
@@ -332,6 +354,23 @@ T4 = function() {
         '.button + .button',
         [
           'margin-top: 3px'
+        ]
+      )
+
+      // log bar
+      this.addCssStyle(
+        '#log_bar',
+        [
+          'margin-left: 193px',
+          'padding: 4px 5px',
+          'background: white',
+          'width: 587px',
+          'height: 16px',
+          'overflow: hidden',
+          'color: red',
+          'margin-top: 2px',
+          'z-index: 1',
+          'position: relative'
         ]
       )
     }
