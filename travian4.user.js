@@ -1219,7 +1219,7 @@ T4 = function() {
       } else if( TE.Plus.Village.isVillagePage() ) {
         TE.Plus.Village.addMarkMarkplace()
       }
-      TE.Utils.log("finish!")
+      TE.Utils.log("Loaded & Ready.")
     // } catch (e) { TE.Utils.log("main: " + e) }
   }
 
