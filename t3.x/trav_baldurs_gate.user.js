@@ -2,7 +2,7 @@
 // @name           trav Baldurs Gate
 // @namespace      Travain
 // @include        http://www.travian.org/build.php?*
-// @version        1.1
+// @version        1.2
 // ==/UserScript==
 
 var dname              = "Baldurs Gate"
@@ -59,13 +59,13 @@ if(isMarktplatz != null && isMarktplatz0 != null) {
     })
 
     if(dorf instanceof Array) {
-      document.getElementById("xCoordInput").value=dorf[0]
-      document.getElementById("yCoordInput").value=dorf[1]
+      document.getElementsByName("x")[0].value=dorf[0]
+      document.getElementsByName("y")[0].value=dorf[1]
       document.getElementsByName("dname")[0].value=''
     } else {
       document.getElementsByName("dname")[0].value=dorf
-      document.getElementById("xCoordInput").value=''
-      document.getElementById("yCoordInput").value=''
+      document.getElementsByName("x")[0].value=''
+      document.getElementsByName("y")[0].value=''
     }
 
     if(r == 1) {
