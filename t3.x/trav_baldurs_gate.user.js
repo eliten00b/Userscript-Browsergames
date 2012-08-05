@@ -5,39 +5,45 @@
 // @version        1.0
 // ==/UserScript==
 
-var dname = "Baldurs Gate";
-var h1Elements = document.getElementsByTagName("h1");
-var i;
-var isMarktplatz;
-var ausdruckMarktplatz = /Marktplatz.*/;
-for(i = 0;i<h1Elements.length;i++)
-{
-	isMarktplatz = ausdruckMarktplatz.exec(h1Elements[i].firstChild.data);
-	if(isMarktplatz != null) i=h1Elements.length;
+var dname              = "Baldurs Gate"
+	, h1Elements         = document.getElementsByTagName("h1")
+	, i
+	, isMarktplatz
+	, ausdruckMarktplatz = /Marktplatz.*/
+
+for(i = 0;i<h1Elements.length;++i) {
+	isMarktplatz = ausdruckMarktplatz.exec(h1Elements[i].firstChild.data)
+	if(isMarktplatz != null) {
+		i = h1Elements.length
+	}
 }
-var spanElements = document.getElementsByTagName("span");
-var isMarktplatz0;
-var ausdruckMarktplatz0 = /Dorf:.*/;
-for(i = 0;i<spanElements.length;i++)
-{
-	isMarktplatz0 = ausdruckMarktplatz0.exec(spanElements[i].firstChild.data);
-	if(isMarktplatz0 != null) i=spanElements.length;
+
+var spanElements        = document.getElementsByTagName("span")
+	, isMarktplatz0
+	, ausdruckMarktplatz0 = /Dorf:.*/
+
+for(i = 0; i < spanElements.length; ++i) {
+	isMarktplatz0 = ausdruckMarktplatz0.exec(spanElements[i].firstChild.data)
+	if(isMarktplatz0 != null) {
+		i=spanElements.length
+	}
 }
+
 if(isMarktplatz != null && isMarktplatz0 != null) {
-	var menu = document.getElementById("textmenu");
-	var menu = menu.nextSibling;
+	var menu = document.getElementById("textmenu")
+		, menu = menu.nextSibling
+		, lieferMenu = document.createElement("div")
+		, lieferScript = document.createElement("script")
 
-	var lieferMenu = document.createElement("div");
-	lieferMenu.appendChild(document.createElement("a"));
-	lieferMenu.lastChild.setAttribute("href", "#");
-	lieferMenu.lastChild.setAttribute("onclick", "return false;");
-	lieferMenu.lastChild.setAttribute("onmouseup", "sendRessis('"+dname+"')");
-	lieferMenu.lastChild.appendChild(document.createTextNode("Nach "+dname));
+	lieferMenu.appendChild(document.createElement("a"))
+	lieferMenu.lastChild.setAttribute("href", "#")
+	lieferMenu.lastChild.setAttribute("onclick", "return false;")
+	lieferMenu.lastChild.setAttribute("onmouseup", "sendRessis('"+dname+"')")
+	lieferMenu.lastChild.appendChild(document.createTextNode("Nach "+dname))
 
-	document.getElementById("build").insertBefore(lieferMenu, menu);
+	document.getElementById("build").insertBefore(lieferMenu, menu)
 
-	var lieferScript = document.createElement("script");
-	lieferScript.setAttribute("language", "JavaScript");
+	lieferScript.setAttribute("language", "JavaScript")
 	lieferScript.appendChild(document.createTextNode("<!--\n"+
 "function sendRessis(dorf)"+
 "{\n"+
@@ -118,7 +124,7 @@ if(isMarktplatz != null && isMarktplatz0 != null) {
 	"}"+
 
 "}\n"+
-"//--> "));
+"//--> "))
 
-	document.getElementById("build").insertBefore(lieferScript, menu);
+	document.getElementById("build").insertBefore(lieferScript, menu)
 }
