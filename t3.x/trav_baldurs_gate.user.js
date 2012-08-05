@@ -2,7 +2,7 @@
 // @name           trav Baldurs Gate
 // @namespace      Travain
 // @include        http://www.travian.org/build.php?*
-// @version        1.0
+// @version        1.1
 // ==/UserScript==
 
 var dname              = "Baldurs Gate"
@@ -11,7 +11,7 @@ var dname              = "Baldurs Gate"
 	, isMarktplatz
 	, ausdruckMarktplatz = /Marktplatz.*/
 
-for(i = 0;i<h1Elements.length;++i) {
+for(i = 0;i<h1Elements.length; ++i) {
 	isMarktplatz = ausdruckMarktplatz.exec(h1Elements[i].firstChild.data)
 	if(isMarktplatz != null) {
 		i = h1Elements.length
@@ -35,96 +35,84 @@ if(isMarktplatz != null && isMarktplatz0 != null) {
 		, lieferMenu = document.createElement("div")
 		, lieferScript = document.createElement("script")
 
-	lieferMenu.appendChild(document.createElement("a"))
+	lieferMenu.appendChild( document.createElement("a") )
 	lieferMenu.lastChild.setAttribute("href", "#")
 	lieferMenu.lastChild.setAttribute("onclick", "return false;")
-	lieferMenu.lastChild.setAttribute("onmouseup", "sendRessis('"+dname+"')")
-	lieferMenu.lastChild.appendChild(document.createTextNode("Nach "+dname))
+	lieferMenu.lastChild.setAttribute("onmouseup", "sendRessis('" + dname + "', 0)")
+	lieferMenu.lastChild.appendChild( document.createTextNode("Nach: " + dname) )
 
 	document.getElementById("build").insertBefore(lieferMenu, menu)
 
 	lieferScript.setAttribute("language", "JavaScript")
-	lieferScript.appendChild(document.createTextNode("<!--\n"+
-"function sendRessis(dorf)"+
-"{\n"+
-	"var ressi1 = document.getElementById(\"l4\");\n"+
-	"var ressi2 = document.getElementById(\"l3\");\n"+
-	"var ressi3 = document.getElementById(\"l2\");\n"+
-	"var ressi4 = document.getElementById(\"l1\");\n"+
 
-	"lager = new Array();\n"+
-	"var ausdruckRessis = /([0-9]*)\\/[0-9]*/;\n"+
+	var sendRessis = function(dorf, r) {
+    var x2only         = document.getElementById('x2') === null
+      , ressis         = [document.getElementById("l4"), document.getElementById("l3"),
+      						        document.getElementById("l2"), document.getElementById("l1")]
+      , ressisSend     = [document.getElementById("r1"), document.getElementById("r2"),
+      						        document.getElementById("r3"), document.getElementById("r4")]
+      , lager          = new Array()
+      , ausdruckRessis = /([0-9]*)\/[0-9]*/
 
-	"lager[0] = parseInt(ausdruckRessis.exec(ressi1.innerHTML)[1]);\n"+
-	"lager[1] = parseInt(ausdruckRessis.exec(ressi2.innerHTML)[1]);\n"+
-	"lager[2] = parseInt(ausdruckRessis.exec(ressi3.innerHTML)[1]);\n"+
-	"lager[3] = parseInt(ausdruckRessis.exec(ressi4.innerHTML)[1]);\n"+
+    ressis.each(function(res, i) {
+      lager[i] = parseInt(res.innerHTML.match(ausdruckRessis)[1])
+    })
 
-	"document.getElementsByName(\"dname\")[0].value=dorf;\n"+
+    if(dorf instanceof Array) {
+      document.getElementById("xCoordInput").value=dorf[0]
+      document.getElementById("yCoordInput").value=dorf[1]
+      document.getElementsByName("dname")[0].value=''
+    } else {
+      document.getElementsByName("dname")[0].value=dorf
+      document.getElementById("xCoordInput").value=''
+      document.getElementById("yCoordInput").value=''
+    }
 
-	"if((lager[0] + lager[1] + lager[2] + lager[3]) <= (haendler * carry)) {\n"+
+    if(r == 1) {
+      lager[3] = 0
+    } else if(r == 2) {
+      lager[0] = 0
+      lager[1] = 0
+      lager[2] = 0
+    }
 
-			"document.getElementById(\"r1\").value=lager[0];\n"+
-			"document.getElementById(\"r2\").value=lager[1];\n"+
-			"document.getElementById(\"r3\").value=lager[2];\n"+
-			"document.getElementById(\"r4\").value=lager[3];\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[3].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[5].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[1].setAttribute(\"selected\", \"selected\");\n"+
+    var ressisgesammt = lager[0] + lager[1] + lager[2] + lager[3]
+    if(ressisgesammt <= (haendler * carry)) {
+      ressisSend.each(function(res, i) {
+        res.value = lager[i]
+      })
 
-	"} else if((lager[0] + lager[1] + lager[2] + lager[3])/2 <= (haendler * carry)) {\n"+
+      if(!x2only) {
+        document.getElementsByName("x2")[0].selectedIndex = 0
+      }
+    } else {
+      var ressisfaktor = new Array()
+        , ressisSenden = new Array()
 
-			"document.getElementById(\"r1\").value=Math.ceil(lager[0]/2);\n"+
-			"document.getElementById(\"r2\").value=Math.ceil(lager[1]/2);\n"+
-			"document.getElementById(\"r3\").value=Math.ceil(lager[2]/2);\n"+
-			"document.getElementById(\"r4\").value=Math.ceil(lager[3]/2);\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[1].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[5].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[3].setAttribute(\"selected\", \"selected\");\n"+
+      for(var i = 0; i < 4; i++) {
+        ressisfaktor[i] = (lager[i] === 0 ? 0 : ressisgesammt / lager[i])
+      }
 
-	"} else if((lager[0] + lager[1] + lager[2] + lager[3])/3 <= (haendler * carry)) {\n"+
+      for(var i = 0; i < 4; i++) {
+        ressisSenden[i] = (ressisfaktor[i] === 0 ? 0 : Math.ceil( (haendler * carry) / ressisfaktor[i] ) - 1)
+      }
 
-			"document.getElementById(\"r1\").value=Math.ceil(lager[0]/3);\n"+
-			"document.getElementById(\"r2\").value=Math.ceil(lager[1]/3);\n"+
-			"document.getElementById(\"r3\").value=Math.ceil(lager[2]/3);\n"+
-			"document.getElementById(\"r4\").value=Math.ceil(lager[3]/3);\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[1].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[3].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[5].setAttribute(\"selected\", \"selected\");\n"+
-/*	"} else if((lager[0] + lager[1] + lager[2])/2 <= (haendler * carry)) {\n"+
+      ressisSend.each(function(res, i) {
+        res.value = ressisSenden[i]
+      })
 
-			"document.getElementById(\"r1\").value=Math.ceil(lager[0]/2);\n"+
-			"document.getElementById(\"r2\").value=Math.ceil(lager[1]/2);\n"+
-			"document.getElementById(\"r3\").value=Math.ceil(lager[2]/2);\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[1].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[5].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[3].setAttribute(\"selected\", \"selected\");\n"+
-	"} else if((lager[0] + lager[1] + lager[2])/3 <= (haendler * carry)) {\n"+
+      if(!x2only) {
+        if((lager[0] + lager[1] + lager[2] + lager[3]) <= (haendler * carry * 2)) {
+          document.getElementsByName("x2")[0].selectedIndex = 1
+        } else {
+          document.getElementsByName("x2")[0].selectedIndex = 2
+        }
+      } else {
+        document.getElementsByName("x2")[0].checked = true
+      }
+    }
+  }
 
-			"document.getElementById(\"r1\").value=Math.ceil(lager[0]/3);\n"+
-			"document.getElementById(\"r2\").value=Math.ceil(lager[1]/3);\n"+
-			"document.getElementById(\"r3\").value=Math.ceil(lager[2]/3);\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[1].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[5].removeAttribute(\"selected\");\n"+
-			"document.getElementsByName(\"x2\")[0].childNodes[3].setAttribute(\"selected\", \"selected\");\n"+
-*/	"} else {"+
-		"var ressisgesammt = lager[0] + lager[1] + lager[2] + lager[3];\n"+
-		"ressisfaktor = new Array();\n"+
-		"ressisfaktor[0] = ressisgesammt/lager[0];\n"+
-		"ressisfaktor[1] = ressisgesammt/lager[1];\n"+
-		"ressisfaktor[2] = ressisgesammt/lager[2];\n"+
-		"ressisfaktor[3] = ressisgesammt/lager[3];\n"+
-		"document.getElementById(\"r1\").value=Math.ceil((haendler * carry)/ressisfaktor[0])-1;\n"+
-		"document.getElementById(\"r2\").value=Math.ceil((haendler * carry)/ressisfaktor[1])-1;\n"+
-		"document.getElementById(\"r3\").value=Math.ceil((haendler * carry)/ressisfaktor[2])-1;\n"+
-		"document.getElementById(\"r4\").value=Math.ceil((haendler * carry)/ressisfaktor[3])-1;\n"+
-		"document.getElementsByName(\"x2\")[0].childNodes[1].removeAttribute(\"selected\");\n"+
-		"document.getElementsByName(\"x2\")[0].childNodes[3].removeAttribute(\"selected\");\n"+
-		"document.getElementsByName(\"x2\")[0].childNodes[5].setAttribute(\"selected\", \"selected\");\n"+
-	"}"+
-
-"}\n"+
-"//--> "))
-
+	lieferScript.appendChild(document.createTextNode("<!--\nsendRessis = " + sendRessis.toString() + "\n--> "))
 	document.getElementById("build").insertBefore(lieferScript, menu)
 }
