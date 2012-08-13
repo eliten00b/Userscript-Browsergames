@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.17
+// @version        2.18
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -76,7 +76,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.17',
+    version:   'v2.18',
 
     isOpera:   false,
     isFirefox: false,
@@ -1086,6 +1086,7 @@ T4 = function() {
 
   TE.Config = {
     storageKey: '',
+    storageKeyAddons: '',
 
     init: function() {
       TE.Utils.log(['Config.init'], 1)
@@ -1094,6 +1095,7 @@ T4 = function() {
       TE.Config.PlayerSettings.player = TE.Plus.Player.getPlayer()
 
       TE.Config.storageKey = TE.Config.PlayerSettings.server + '.' + TE.Config.PlayerSettings.player
+      TE.Config.storageKeyAddons = TE.Config.storageKey + '.Addons'
 
       TE.Config.loadPlayerSettings()
     },
