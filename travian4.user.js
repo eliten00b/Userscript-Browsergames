@@ -175,7 +175,7 @@ T4 = function() {
 
     log: function (str, level) {
       var level      = level || 0
-        , debugLevel = this.readStored('debugLevel', false) || 0
+        , debugLevel = this.readStored('debugLevel', false) || -1
 
       if(level <= debugLevel) {
         if(this.gmEnabled) {
