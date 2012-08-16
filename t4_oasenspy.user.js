@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Oasesspy
 // @namespace      TravainOasesspy
-// @version        1.0
+// @version        1.1
 // @description    Spy all oases and check for animals.
 // @include        http://t*.travian.de/karte.php*
 // ==/UserScript==
@@ -114,6 +114,9 @@ T4 = function() {
             if(tile.t.match('{a.r4}') !== null) { tile.typ.push('Getreide') }
 
             delete tile.t
+
+            tile.x = parseInt(tile.x)
+            tile.y = parseInt(tile.y)
 
             oases[tile.x + '|' + tile.y] = tile
           }
