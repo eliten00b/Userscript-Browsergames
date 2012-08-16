@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Oasesspy
 // @namespace      TravainOasesspy
-// @version        0.5
+// @version        1.0
 // @description    Spy all oases and check for animals.
 // @include        http://t*.travian.de/karte.php*
 // ==/UserScript==
@@ -11,6 +11,7 @@ T4 = function() {
     oases:         {},
     oasesKeys:     [],
     currentOaseId: 0,
+    areaOffsets:   [],
     areaOffset:    [0,0],
     offsetId:      0,
     storageKey:    TE.Config.storageKeyAddons + '.Oasesspy',
@@ -25,6 +26,7 @@ T4 = function() {
 
       this.addButtons()
       this.prepareTable()
+      this.generateOffsets()
     },
 
     addButtons: function() {
@@ -143,17 +145,53 @@ T4 = function() {
       TE.Utils.writeStore(TE.Addons.Oasesspy.storageKey, TE.Addons.Oasesspy.oases)
       TE.Addons.Oasesspy.updateNewArea()
 
-      TE.Utils.log('All oases successful get.')
+      TE.Utils.log('All oases successful get and saved.')
     },
 
     updateNewArea: function() {
-      var offsets = [[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]]
-
-      TE.Addons.Oasesspy.areaOffset = offsets[TE.Addons.Oasesspy.offsetId]
+      TE.Addons.Oasesspy.areaOffset = TE.Addons.Oasesspy.areaOffsets[TE.Addons.Oasesspy.offsetId]
 
       TE.Addons.Oasesspy.offsetId++
-      if(TE.Addons.Oasesspy.offsetId >= offsets.length) {
+      if(TE.Addons.Oasesspy.offsetId >= TE.Addons.Oasesspy.areaOffsets.length) {
         TE.Addons.Oasesspy.offsetId = 0
+      }
+    },
+
+    generateOffsets: function() {
+      var x        = 0
+        , y        = 0
+        , round    = 1
+        , maxRound = 2
+
+        , add = function(x,y) {
+          TE.Addons.Oasesspy.areaOffsets.push([x,y])
+        }
+
+      while (round <= maxRound) {
+        y += 1
+        add(x, y)
+
+        for(var a = 0; a < ( (round * 2) - 1 ); ++a) {
+          x += 1
+          add(x, y)
+        }
+
+        for(var a = 0; a < (round * 2); ++a) {
+          y -= 1
+          add(x, y)
+        }
+
+        for(var a = 0; a < (round * 2); ++a) {
+          x -= 1
+          add(x, y)
+        }
+
+        for(var a = 0; a < (round * 2); ++a) {
+          y += 1
+          add(x, y)
+        }
+
+        ++round
       }
     },
 
@@ -188,9 +226,11 @@ T4 = function() {
       key = TE.Addons.Oasesspy.oasesKeys[TE.Addons.Oasesspy.currentOaseId]
 
       if(TE.Addons.Oasesspy.currentOaseId < TE.Addons.Oasesspy.oasesKeys.length) {
-        setTimeout(TE.Addons.Oasesspy.sendSpyRequest, 500, TE.Addons.Oasesspy.oases[key])
+        setTimeout(TE.Addons.Oasesspy.sendSpyRequest, 300, TE.Addons.Oasesspy.oases[key])
       } else {
         TE.Addons.Oasesspy.currentOaseId = 0
+        TE.Utils.writeStore(TE.Addons.Oasesspy.storageKey, TE.Addons.Oasesspy.oases)
+        TE.Utils.log('All oases successful spyed and saved.')
       }
     },
 
@@ -224,10 +264,10 @@ T4 = function() {
       for(var key in this.oases) {
         var oase = this.oases[key]
 
-        if(minX === null || minX > oase.x) { minX = oase.x }
-        if(minY === null || minY > oase.y) { minY = oase.y }
-        if(maxX === null || maxX < oase.x) { maxX = oase.x }
-        if(maxY === null || maxY < oase.y) { maxY = oase.y }
+        if(minX === null || minX > parseInt(oase.x)) { minX = parseInt(oase.x) }
+        if(minY === null || minY > parseInt(oase.y)) { minY = parseInt(oase.y) }
+        if(maxX === null || maxX < parseInt(oase.x)) { maxX = parseInt(oase.x) }
+        if(maxY === null || maxY < parseInt(oase.y)) { maxY = parseInt(oase.y) }
       }
 
       console.log(minX, minY, maxX, maxY)
