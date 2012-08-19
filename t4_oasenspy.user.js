@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+ Oasesspy
 // @namespace      TravainOasesspy
-// @version        1.1
+// @version        1.2
 // @description    Spy all oases and check for animals.
 // @include        http://t*.travian.de/karte.php*
 // ==/UserScript==
@@ -17,7 +17,7 @@ T4 = function() {
     storageKey:    TE.Config.storageKeyAddons + '.Oasesspy',
 
     init: function() {
-      TE.Utils.log('Oasesspy start...')
+      TE.Utils.log('Start Oasesspy version 1.2')
 
       var oases = TE.Utils.readStored(this.storageKey)
       if(typeOf(oases) === 'object') {
@@ -45,8 +45,8 @@ T4 = function() {
       var x    = parseInt(TE.Plus.Village.currentVillage().x)
         , y    = parseInt(TE.Plus.Village.currentVillage().y)
 
-      x += (TE.Addons.Oasesspy.areaOffset[0] * 30) + 1
-      y += (TE.Addons.Oasesspy.areaOffset[1] * 30) + 1
+      x += (TE.Addons.Oasesspy.areaOffset[0] * 31)
+      y += (TE.Addons.Oasesspy.areaOffset[1] * 31)
 
       var data = {
             data: {
@@ -61,7 +61,10 @@ T4 = function() {
             url: 'ajax.php'
           }
 
-      TE.Utils.log('Start getting data for oases... Offset ID: ' + TE.Addons.Oasesspy.offsetId)
+      TE.Utils.log('Start getting data for oases... Offset ID: {id} of {max}'
+          .replace(TE.Addons.Oasesspy.offsetId)
+          .replace(TE.Addons.Oasesspy.areaOffsets.length)
+      )
       TE.Utils.log(['Oasesspy.searchOases send', data], 2)
       Travian.ajax(data)
     },
@@ -147,6 +150,10 @@ T4 = function() {
 
       TE.Utils.writeStore(TE.Addons.Oasesspy.storageKey, TE.Addons.Oasesspy.oases)
       TE.Addons.Oasesspy.updateNewArea()
+
+      if(TE.Addons.Oasesspy.offsetId !== 0) {
+        setTimeout(TE.Addons.Oasesspy.searchOases, 100)
+      }
 
       TE.Utils.log('All oases successful get and saved.')
     },
