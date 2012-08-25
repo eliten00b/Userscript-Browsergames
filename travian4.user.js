@@ -1138,38 +1138,29 @@ T4 = function() {
       rangeVillages: []
     },
 
-    Units: [
-      // createUnit: function(name, speed) {
-        // return new Array(name, speed)
-      // },
-      // Units[2]['x1'][0]
-      {
-        volk: ''
+    Units: {
+      getUnits: function() {
+
       },
-      {
-        volk: 'Römer'
-      },
-      {
-        volk: 'Germanen'
-      },
-      {
-        volk: 'Galliar',
-        x1: [
-          {n: 'Phalanx', s: 7}, {n: 'Schwertkämpfer', s: 6},
-          {n: 'Späher', s: 17}, {n: 'Theutates Blitz', s: 19}, {n: 'Druidenreiter', s: 16}, {n: 'Haeduaner', s: 13},
-          {n: 'Rammholz', s: 4}, {n: 'Kriegskatapult', s: 3},
-          {n: 'Häuptling', s: 5}, {n: 'Siedler', s: 5},
-          {n: 'Händler', s: 24}
-        ],
-        x3: [
-          {n: 'Phalanx', s: 14}, {n: 'Schwertkämpfer', s: 12},
-          {n: 'Späher', s: 34}, {n: 'Theutates Blitz', s: 38}, {n: 'Druidenreiter', s: 32}, {n: 'Haeduaner', s: 26},
-          {n: 'Rammholz', s: 8}, {n: 'Kriegskatapult', s: 6},
-          {n: 'Häuptling', s: 10}, {n: 'Siedler', s: 10},
-          {n: 'Händler', s: 72}
-        ]
+
+      'Römer': {},
+
+      'Germanen': {},
+
+      'Galliar': {
+        'Phalanx': {speed: {x1: 7, x3: 14}, ressis: []},
+        'Schwertkämpfer': {speed: {x1: 6, x3: 12}},
+        'Späher': {speed: {x1: 17, x3: 34}},
+        'Theutates Blitz': {speed: {x1: 9, x3: 38}},
+        'Druidenreiter': {speed: {x1: 16, x3: 32}},
+        'Haeduaner': {speed: {x1: 13, x3: 26}},
+        'Rammholz': {speed: {x1:  4, x3:  8}},
+        'Kriegskatapult': {speed: {x1: 3, x3:  6}},
+        'Häuptling': {speed: {x1:  5, x3: 10}},
+        'Siedler': {speed: {x1: 5, x3: 10}},
+        'Händler': {speed: {x1: 24, x3: 72}}
       }
-    ],
+    },
 
     Builgings: [
       {name: 'Lehmgrube', id: 1}, {name: 'Lehmgrube', id: 2}, {name: 'Eisenmine', id: 3}, {name: 'Getreidefarm', id: 4},
