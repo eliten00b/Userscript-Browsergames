@@ -580,29 +580,51 @@ T4 = function() {
 
     Marketplace: {
       is: function() {
-        return $$('#build.gid17 .container.active .favorKey5').length != 0
+        return $$('#build.gid17').length != 0
+      },
+
+      addMenus: function() {
+        if($$('#build.gid17 .container.active .favorKey5').length != 0) {
+          this.createMenuSend(TE.Config.PlayerSettings.marketVillages)
+        }
+        else if($$('#build.gid17 .container.active .favorKey3').length != 0) {
+          this.createMenuChange()
+        }
+      },
+
+      createMenuSend: function(villages) {
+        var menu = $$('#build.gid17 .carry')[0]
+
+        for(var i = 0; i < villages.length; i++) {
+          var menuPoint = this.createMenuPoint(villages[i])
+
+          document.getElementById("build").insertBefore(menuPoint, menu)
+        }
       },
 
       createMenuPoint: function(village) {
         var menuPoint = document.createElement("div")
-        menuPoint.appendChild(TE.Utils.newElement("span", TE.Plus.Village.dorfName(village) + ": ", "display: inline-block; width: 80px; overflow: hidden; height: 13px; white-space: nowrap;"))
-        menuPoint.appendChild(TE.Utils.newElement("a", "ALLES", [["href", "#"],["onclick", "return false;"], ["onmouseup", "sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 0)"]]))
+
+        menuPoint.appendChild(TE.Utils.newElement("span", TE.Plus.Village.dorfName(village) + ": ",
+            "display: inline-block; width: 80px; overflow: hidden; height: 13px; white-space: nowrap;")
+        )
+        menuPoint.appendChild(TE.Utils.newElement("a", "ALLES", [
+            ["href", "#"], ["onclick", "TE.Plus.Marketplace.sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 0)"]
+        ]))
         menuPoint.appendChild(TE.Utils.newElement("span", " || ", ""))
-        menuPoint.appendChild(TE.Utils.newElement("a", "OHNE G3d", [["href", "#"],["onclick", "return false;"], ["onmouseup", "sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 1)"]]))
+        menuPoint.appendChild(TE.Utils.newElement("a", "OHNE G3d", [
+            ["href", "#"], ["onclick", "TE.Plus.Marketplace.sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 1)"]
+        ]))
         menuPoint.appendChild(TE.Utils.newElement("span", " || ", ""))
-        menuPoint.appendChild(TE.Utils.newElement("a", "NUR G3d", [["href", "#"],["onclick", "return false;"], ["onmouseup", "sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 2)"]]))
+        menuPoint.appendChild(TE.Utils.newElement("a", "NUR G3d", [
+            ["href", "#"], ["onclick", "TE.Plus.Marketplace.sendRessis(" + TE.Plus.Village.nameOrCoords(village) + ", 2)"]
+        ]))
+
         return menuPoint
       },
 
-      createMenu: function(villages) {
-        var menu = $$('#build.gid17 .carry')[0]
-        for(var i = 0; i < villages.length; i++) {
-          var menuPoint = this.createMenuPoint(villages[i])
-          document.getElementById("build").insertBefore(menuPoint, menu)
-        }
-        var lieferScript = TE.Utils.newElement('script', "var sendRessis = " + TE.Plus.Marketplace.sendRessis.toString(), '')
-        lieferScript.setAttribute('type', 'text/javascript')
-        $$('#build.gid17')[0].insertBefore(lieferScript, menu)
+      createMenuChange: function() {
+
       },
 
       sendRessis: function(dorf, r) {
@@ -668,6 +690,8 @@ T4 = function() {
             document.getElementsByName("x2")[0].checked = true
           }
         }
+
+        return false
       }
     },
 
@@ -1206,7 +1230,7 @@ T4 = function() {
       }
 
       if( TE.Plus.Marketplace.is() ) {
-        TE.Plus.Marketplace.createMenu(TE.Config.PlayerSettings.marketVillages)
+        TE.Plus.Marketplace.addMenus()
       } else if( TE.Plus.Player.isProfil(currentTitle) ) {
         TE.Plus.Village.analyze()
         TE.Plus.Player.analyze()
