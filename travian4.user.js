@@ -1093,6 +1093,7 @@ T4 = function() {
 
       TE.Config.PlayerSettings.server = location.hostname.match(/^[^.]{3}/)[0]
       TE.Config.PlayerSettings.player = TE.Plus.Player.getPlayer()
+      TE.Config.PlayerSettings.nation = $$('.sideInfoPlayer .nationBig')[0].getAttribute('alt')
 
       TE.Config.storageKey = TE.Config.PlayerSettings.server + '.' + TE.Config.PlayerSettings.player
       TE.Config.storageKeyAddons = TE.Config.storageKey + '.Addons'
