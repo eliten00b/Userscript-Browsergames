@@ -483,13 +483,17 @@ T4 = function() {
         var p = new Array(4)
           , r = new Array(4)
           , l = new Array(4)
-        for(var i=0; i < 4; i++) {
+
+        for(var i = 0; i < 4; ++i) {
           p[i] = window.resources.production["l" + (i + 1)]
+
           var resRL = TE.Utils.XPathSingle('//*[@id="l' + (i + 1) + '"]')
             , resRL = /([0-9]+)\/([0-9]+)/.exec(resRL.innerHTML)
+
           r[i] = resRL[1]
           l[i] = resRL[2]
         }
+
         TE.Utils.updateUniq(TE.Config.PlayerSettings["resVillages"], {name: this.currentVillageName, p: p, r: r, l: l}, ["name"])
         TE.Config.savePlayerSettings()
       },
