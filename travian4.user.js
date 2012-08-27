@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.20
+// @version        2.21
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -76,7 +76,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.20',
+    version:   'v2.21',
 
     isOpera:   false,
     isFirefox: false,
@@ -473,6 +473,7 @@ T4 = function() {
           for(var k = 0, l = TE.Config.PlayerSettings.resVillages.length; k < l; ++k) {
             if(TE.Config.PlayerSettings.resVillages[k].name === savedVillageNames[i]) {
               TE.Config.PlayerSettings.resVillages.splice(k, 1)
+              break
             }
           }
         }
