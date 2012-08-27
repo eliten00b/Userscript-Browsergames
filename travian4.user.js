@@ -448,7 +448,38 @@ T4 = function() {
 
         TE.Config.PlayerSettings.rangeVillages = villages
 
+        this.updateResVillages()
+
         TE.Config.savePlayerSettings()
+      },
+
+      updateResVillages: function() {
+        var savedVillageNames   = []
+          , currentVillageNames = []
+
+        for(var i = 0, j = TE.Config.PlayerSettings.resVillages.length; i < j; ++i) {
+          savedVillageNames.push(TE.Config.PlayerSettings.resVillages[i].name)
+        }
+
+        for(var i = 0, j = TE.Config.PlayerSettings.rangeVillages.length; i < j; ++i) {
+          currentVillageNames.push(TE.Config.PlayerSettings.rangeVillages[i].name)
+        }
+
+        for(var i = 0, j = TE.Config.PlayerSettings.rangeVillages.length; i < j; ++i) {
+          savedVillageNames.erase(currentVillageNames[i])
+        }
+
+        for(var i = 0, j = savedVillageNames.length; i < j; ++i) {
+          for(var k = 0, l = TE.Config.PlayerSettings.resVillages.length; k < l; ++k) {
+            if(TE.Config.PlayerSettings.resVillages[k].name === savedVillageNames[i]) {
+              delete TE.Config.PlayerSettings.resVillages[k]
+            }
+          }
+        }
+
+        TE.Config.PlayerSettings.resVillages.erase(undefined)
+
+        TE.Utils.log(['Deleted villages: ', savedVillageNames.join(', ')])
       },
 
       isVillagePage: function() {
