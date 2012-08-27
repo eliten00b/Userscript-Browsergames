@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.19
+// @version        2.20
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -76,7 +76,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.19',
+    version:   'v2.20',
 
     isOpera:   false,
     isFirefox: false,
@@ -472,12 +472,10 @@ T4 = function() {
         for(var i = 0, j = savedVillageNames.length; i < j; ++i) {
           for(var k = 0, l = TE.Config.PlayerSettings.resVillages.length; k < l; ++k) {
             if(TE.Config.PlayerSettings.resVillages[k].name === savedVillageNames[i]) {
-              delete TE.Config.PlayerSettings.resVillages[k]
+              TE.Config.PlayerSettings.resVillages.splice(k, 1)
             }
           }
         }
-
-        TE.Config.PlayerSettings.resVillages.erase(undefined)
 
         TE.Utils.log(['Deleted villages: ', savedVillageNames.join(', ')])
       },
