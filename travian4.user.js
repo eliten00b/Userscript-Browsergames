@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian+
 // @namespace      Travain
-// @version        2.21
+// @version        2.22
 // @description    Nice extensions for Travian 4.0
 // @include        http://t*.travian.de/*
 // @exclude        http://*.travian.de/login.php
@@ -76,7 +76,7 @@ T4 = function() {
 
   // Include all stuff that is useful in other addons to.
   TE.Utils = {
-    version:   'v2.21',
+    version:   'v2.22',
 
     isOpera:   false,
     isFirefox: false,
@@ -373,6 +373,9 @@ T4 = function() {
           'position: relative'
         ]
       )
+
+      //fix rest ress display
+      this.addCssStyle('.showCosts .resources', ['vertical-align: top'])
     }
   }
 
